@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<HTML>
+
+<BODY onload='init()'>
+
+	<script src="js.js"></script>
+	<link rel="stylesheet" type="text/css" href="css.css"/>
+
+	<div id='container'>
+
+		<h1></h1>
+
+		<div id='buttons' class='panel'>
+			<h2>Elements</h2><hr>
+			<button id='WaterButton' class='Water ToolTip' onclick="submit('Water')">Water</button>
+			<button id='EarthButton' class='Earth ToolTip' onclick="submit('Earth')">Earth</button>
+			<button id='AirButton' class='Air ToolTip' onclick="submit('Air')">Air</button>
+			<button id='FireButton' class='Fire ToolTip' onclick="submit('Fire')">Fire</button>
+			<button id='SpiritButton' class='Spirit ToolTip' onclick="submit('Spirit')">Spirit</button>
+		</div>
+
+		<div id='info' class='panel'>
+			<h2>Scores</h2><hr>
+			<p id='score'></p>
+			<p id='wins'></p>
+			<p id='losses'></p>
+			<p id='draws'></p>
+		</div>
+
+		<div id='logContainer' class='panel'>
+			<h2>Battle log</h2><hr>
+			<div id='log'>
+			</div>
+		</div>
+
+		<canvas id="cv">
+
+		</canvas>
+
+	</div>
+
+	<div id='battlefield'>
+		<div id="battlefieldplayer" class='battlefield player'>
+			<p>Your elemental forces</p>
+
+		</div>
+
+		<div id="battlefieldAI" class='battlefield AI'>
+			<p>Chaos elementals</p>
+		</div>
+	</div>
+	
+<!-- 	<div id='splash'>
+		<div id='splashText'>
+			The elements are raging! Use your elemental forces to quell them before they tear the world asunder.
+		</div>
+		<button class="Continue" onclick='removeSplash()'>Continue</button>
+	</div> -->
+
+</BODY>
+
+</HTML>
