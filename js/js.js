@@ -26,7 +26,7 @@ function animate(timestamp){
 
   ctx.save();
   ctx.clearRect(0,0,width,height);
-  roundedRect(ctx, playerX, playerY, 10, 10, 4);
+  roundedRect(ctx, playerX, playerY, 10, 10, 4, "#FF0000");
   ctx.restore();
 
   if (stop === false) {
@@ -34,7 +34,8 @@ function animate(timestamp){
     }
 }
 
-function roundedRect(ctx,x,y,width,height,radius){
+function roundedRect(ctx,x,y,width,height,radius, color){
+  ctx.fillStyle = color;
   ctx.beginPath();
   ctx.moveTo(x,y+radius);
   ctx.lineTo(x,y+height-radius);
@@ -45,7 +46,7 @@ function roundedRect(ctx,x,y,width,height,radius){
   ctx.quadraticCurveTo(x+width,y,x+width-radius,y);
   ctx.lineTo(x+radius,y);
   ctx.quadraticCurveTo(x,y,x,y+radius);
-  ctx.stroke();
+  ctx.fill();
 }
 
 function setKey(event, status) {
