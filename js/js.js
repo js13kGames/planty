@@ -11,17 +11,19 @@ var keys = [];
 
 function animate(timestamp){
 
+  var moveSpeed = (keys['SHIFT']) ? 2 : 1;
+
   if(keys['RIGHT']){
-    playerX ++;
+    playerX += moveSpeed;
   }
   if(keys['LEFT']){
-    playerX --;
+    playerX -= moveSpeed;
   }
   if(keys['UP']){
-    playerY --;
+    playerY -= moveSpeed;
   }
   if(keys['DOWN']){
-    playerY ++;
+    playerY += moveSpeed;
   }
 
   ctx.save();
@@ -72,7 +74,11 @@ function setKey(event, status) {
     case 83:
         keys['DOWN'] = status; 
         break;
+    case 16:
+        keys['SHIFT'] = status;
+        break;
     default:
+    console.log(code);
         // Convert ASCII codes to letters
         key = String.fromCharCode(code);
     }
