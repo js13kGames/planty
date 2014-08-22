@@ -26,7 +26,7 @@ function animate(timestamp){
 
   ctx.save();
   ctx.clearRect(0,0,width,height);
-  roundedRect(ctx, playerX, playerY, 10, 10, 4, "#FF0000");
+  roundedRect(ctx, playerX, playerY, 10, 10, 4, "blue");
   ctx.restore();
 
   if (stop === false) {
