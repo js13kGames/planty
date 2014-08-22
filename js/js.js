@@ -28,7 +28,8 @@ function animate(timestamp){
 
   ctx.save();
   ctx.clearRect(0,0,width,height);
-  roundedRect(ctx, playerX, playerY, 10, 10, 4, "blue");
+  plant(ctx, playerX, playerY);
+  //roundedRect(ctx, playerX, playerY, 10, 10, 4, "blue");
   ctx.restore();
 
   if (stop === false) {
@@ -49,6 +50,11 @@ function roundedRect(ctx,x,y,width,height,radius, color){
   ctx.lineTo(x+radius,y);
   ctx.quadraticCurveTo(x,y,x,y+radius);
   ctx.fill();
+}
+
+function plant(ctx, x, y){
+
+  ctx.drawImage(document.getElementById('planty'),x,y);
 }
 
 function setKey(event, status) {
