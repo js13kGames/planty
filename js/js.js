@@ -8,10 +8,14 @@ var stop = false;
 var playerX = 0;
 var playerY = 0;
 var keys = [];
+var frameCount = 0;
 
 function animate(timestamp){
 
   var moveSpeed = (keys['SHIFT']) ? 2 : 1;
+  if(frameCount++ >= 1000){
+    frameCount = 0;
+  }
 
   if(keys['RIGHT']){
     playerX += moveSpeed;
@@ -28,7 +32,14 @@ function animate(timestamp){
 
   ctx.save();
   ctx.clearRect(0,0,width,height);
-  plant(ctx, playerX, playerY);
+
+  if(frameCount%10 > 5){
+    plant(ctx, playerX, playerY, 1);
+  }else{
+    plant(ctx, playerX, playerY, 2);
+  }
+
+  
   //roundedRect(ctx, playerX, playerY, 10, 10, 4, "blue");
   ctx.restore();
 
@@ -52,9 +63,9 @@ function roundedRect(ctx,x,y,width,height,radius, color){
   ctx.fill();
 }
 
-function plant(ctx, x, y){
+function plant(ctx, x, y, state){
 
-  ctx.drawImage(document.getElementById('planty'),x,y);
+  ctx.drawImage(document.getElementById('planty'+state),x,y);
 }
 
 function setKey(event, status) {
