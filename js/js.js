@@ -11,7 +11,7 @@ var keys = [];
 var frameCount = 0;
 
 function animate(timestamp){
-
+  var moving = false;
   var moveSpeed = (keys['SHIFT']) ? 2 : 1;
   if(frameCount++ >= 1000){
     frameCount = 0;
@@ -19,24 +19,34 @@ function animate(timestamp){
 
   if(keys['RIGHT']){
     playerX += moveSpeed;
+    moving = true;
   }
   if(keys['LEFT']){
     playerX -= moveSpeed;
+    moving = true;
   }
   if(keys['UP']){
     playerY -= moveSpeed;
+    moving = true;
   }
   if(keys['DOWN']){
     playerY += moveSpeed;
+    moving = true;
   }
 
   ctx.save();
   ctx.clearRect(0,0,width,height);
 
-  if(frameCount%10 > 5){
-    plant(ctx, playerX, playerY, 1);
+  if(moving === true) {
+    if(frameCount%15 > 5){
+      plant(ctx, playerX, playerY, 1);
+    }else if(frameCount%15 > 10){
+      plant(ctx, playerX, playerY, 2);
+    }else{
+      plant(ctx, playerX, playerY, 3);
+    }
   }else{
-    plant(ctx, playerX, playerY, 2);
+    plant(ctx, playerX, playerY, 1);
   }
 
   
