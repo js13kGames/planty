@@ -12,6 +12,7 @@ var shootCD = 20;
 var keys = [];
 var frameCount = 0;
 var elements = [];
+var colors = {'fire':'orange', 'water':'blue', 'earth':'brown', 'air':'ghostwhite', 'spirit':'black'};
 var collidibles = [
   // Outer Walls
   {x:0,y:0,w:10,h:height},
@@ -20,22 +21,23 @@ var collidibles = [
   {x:0,y:0,w:width,h:10},
 
   // Inner walls
-  {x:0,y:80, w:300, h:10},
-  {x:80, y:400, w:10, h:200},
-  {x:350, y:250, w:100, h:100},
-  {x:600, y:350, w:10, h:250},
-  {x:600, y:80, w:10, h: 80},
-  {x:600, y:160, w:80, h:10}
+  {x:0,y:80, w:300, h:10, type:'fire'},
+  {x:80, y:400, w:10, h:200, type:'air'},
+  {x:600, y:350, w:10, h:250, type:'spirit'},
+  {x:600, y:80, w:10, h: 80, type:'earth'},
+  {x:600, y:160, w:80, h:10, type:'earth'}
 ];
 
 var pickups = [
-  {x:100, y:140, w:10, h:10, onPickup: gain, color:'blue', name:'water'},
-  {x:40, y:height-30, w:10, h:10, onPickup: gain, color:'orange', name:'fire'},
-  {x:20, y:40, w:10, h:10, onPickup: gain, color:'brown', name:'earth'},
-  {x:620, y:60, w:10, h:10, onPickup: gain, color:'ghostwhite', name:'air'}
+  {x:100, y:140, w:10, h:10, onPickup: gain, name:'water'},
+  {x:40, y:height-30, w:10, h:10, onPickup: gain, name:'fire'},
+  {x:20, y:40, w:10, h:10, onPickup: gain, name:'earth'},
+  {x:620, y:60, w:10, h:10, onPickup: gain, name:'air'}
 ];
 
-var enemies = [{x:400, y:150, w:26, h:10, hp:10, speed:1}];
+var enemies = [{x:400, y:150, w:26, h:26, hp:10, speed:1},
+  {x:300, y:150, w:26, h:26, hp:10, speed:0.6}
+];
 
 var projectiles = [];
 
@@ -129,7 +131,7 @@ function checkMove(direction, moveProperty, invert){
       player[moveProperty] += moveSpeed;
     }
     var index = collision(player, collidibles);
-    if(index > -1){
+    if(index > -1 && player.currentPower != collidibles[index].type){
       // Collided with object
       if(invert){
         player[moveProperty] += moveSpeed;
@@ -150,6 +152,7 @@ function collideProjecties(){
     if(index > -1){
       // Collision with walls
       projectiles.splice(i,1);
+
     }else{
       // Collision with enemies
       index = collision(projectiles[i], enemies);
@@ -161,37 +164,13 @@ function collideProjecties(){
   }
 }
 
-function shoot(){
-  switch(player.currentPower){
-    case 'water':
-      var p = {x:player.x, y:player.y, w:3, h:3, color:'blue', tX:0, tY:0};
-      p = modDirection(p);
-      projectiles.push(p);
+function shoot() {
 
-      player.cd = shootCD;
-      break;
+  var p = {x:player.x, y:player.y, w:3, h:3, color:colors[player.currentPower], tX:0, tY:0};
 
-    case 'fire':
-      var p = {x:player.x + player.w/2, y:player.y + player.h/2, w:5, h:5, color:'orange', tX:0, tY:0};
-      projectiles.push(p);
-
-      player.cd = shootCD;
-      break;
-
-    case 'earth':
-      var p = {x:player.x, y:player.y, w:5, h:5, color:'brown', tX:0, tY:0};
-      projectiles.push(p);
-
-      player.cd = shootCD;
-      break;
-
-      case 'air':
-      var p = {x:player.x, y:player.y, w:5, h:5, color:'ghostwhite', tX:0, tY:0};
-      projectiles.push(p);
-
-      player.cd = shootCD;
-      break;
-  }
+  p = modDirection(p);
+  projectiles.push(p);
+  player.cd = shootCD;
 }
 
 function modDirection(p){
@@ -252,22 +231,8 @@ function pickup(){
 }
 
 function gain(item){
-  console.log('Gained water!');
 
-  switch(item){
-    case 'water':
-      elements.push({name:item, color:'blue'});
-      break;
-    case 'fire':
-      elements.push({name:item, color:'orange'});
-      break;
-    case 'earth':
-      elements.push({name:item, color:'brown'});
-      break;
-    case 'air':
-      elements.push({name:item, color:'ghostwhite'});
-      break;
-  }
+  elements.push({name:item, color: colors[item]});
   player.currentPower = item;
 }
 
@@ -277,7 +242,7 @@ function drawPickups() {
   var i;
   for(i=0; i<pickups.length; i++){
     var o = pickups[i];
-    rect(o.x, o.y, o.w, o.h, o.color);
+    rect(o.x, o.y, o.w, o.h, colors[o.name]);
   }
 }
 
@@ -285,7 +250,7 @@ function drawCollidibles() {
   var i;
   for(i=0; i<collidibles.length; i++){
     var o = collidibles[i];
-    rect(o.x, o.y, o.w, o.h, '#000000');
+    rect(o.x, o.y, o.w, o.h, colors[o.type]);
   }
 }
 
@@ -293,11 +258,12 @@ function drawEnemies() {
   var i;
   for(i=0; i<enemies.length; i++){
     var o = enemies[i];
-    var w = o.w;
-    rect(o.x, o.y, w, w, 'ghostwhite', 'purple');
+    o.x += (o.x < player.x) ? o.speed : -o.speed;
+    o.y += (o.y < player.y) ? o.speed : -o.speed;
+    rect(o.x, o.y, o.w, o.h, 'ghostwhite', 'purple');
   }
 }
-
+ 
 function drawProjectiles(){
   var i;
   for(i=0; i<projectiles.length; i++){
