@@ -22,13 +22,17 @@ var collidibles = [
   // Inner walls
   {x:0,y:80, w:300, h:10},
   {x:80, y:400, w:10, h:200},
-  {x:350, y:250, w:100, h:100}
+  {x:350, y:250, w:100, h:100},
+  {x:600, y:350, w:10, h:250},
+  {x:600, y:80, w:10, h: 80},
+  {x:600, y:160, w:80, h:10}
 ];
 
 var pickups = [
-  {x:Math.random()*width, y:Math.random()*height, w:10, h:10, onPickup: gain, color:'blue', name:'water'},
-  {x:Math.random()*width, y:Math.random()*height, w:10, h:10, onPickup: gain, color:'orange', name:'fire'},
-  {x:Math.random()*width, y:Math.random()*height, w:10, h:10, onPickup: gain, color:'brown', name:'earth'}
+  {x:100, y:140, w:10, h:10, onPickup: gain, color:'blue', name:'water'},
+  {x:40, y:height-30, w:10, h:10, onPickup: gain, color:'orange', name:'fire'},
+  {x:20, y:40, w:10, h:10, onPickup: gain, color:'brown', name:'earth'},
+  {x:620, y:60, w:10, h:10, onPickup: gain, color:'ghostwhite', name:'air'}
 ];
 
 var enemies = [{x:400, y:150, w:26, h:10, hp:10, speed:1}];
@@ -113,11 +117,11 @@ function animate(timestamp){
     }
 }
 
-function checkMove(key, moveProperty, invert){
-  if(keys[key]){
+function checkMove(direction, moveProperty, invert){
+  if(keys[direction]){
     // Key pressed
 
-    player.lastDirection = key;
+    player.lastDirection = direction;
 
     if(invert){
       player[moveProperty] -= moveSpeed;
@@ -168,7 +172,7 @@ function shoot(){
       break;
 
     case 'fire':
-      var p = {x:player.x, y:player.y, w:5, h:5, color:'orange', tX:0, tY:0};
+      var p = {x:player.x + player.w/2, y:player.y + player.h/2, w:5, h:5, color:'orange', tX:0, tY:0};
       projectiles.push(p);
 
       player.cd = shootCD;
@@ -176,6 +180,13 @@ function shoot(){
 
     case 'earth':
       var p = {x:player.x, y:player.y, w:5, h:5, color:'brown', tX:0, tY:0};
+      projectiles.push(p);
+
+      player.cd = shootCD;
+      break;
+
+      case 'air':
+      var p = {x:player.x, y:player.y, w:5, h:5, color:'ghostwhite', tX:0, tY:0};
       projectiles.push(p);
 
       player.cd = shootCD;
@@ -246,13 +257,16 @@ function gain(item){
   switch(item){
     case 'water':
       elements.push({name:item, color:'blue'});
-    break;
+      break;
     case 'fire':
       elements.push({name:item, color:'orange'});
-    break;
+      break;
     case 'earth':
       elements.push({name:item, color:'brown'});
-    break;
+      break;
+    case 'air':
+      elements.push({name:item, color:'ghostwhite'});
+      break;
   }
   player.currentPower = item;
 }
@@ -279,11 +293,8 @@ function drawEnemies() {
   var i;
   for(i=0; i<enemies.length; i++){
     var o = enemies[i];
-      ctx.fillStyle = 'orange';
-      ctx.beginPath();
-      ctx.arc(enemies[i].x, enemies[i].y, enemies[i].w/2, 60, 270, false);
-      ctx.stroke();
-      ctx.fill();
+    var w = o.w;
+    rect(o.x, o.y, w, w, 'ghostwhite', 'purple');
   }
 }
 
@@ -297,7 +308,8 @@ function drawProjectiles(){
   }
 }
 
-function rect(x,y,w,h, color) {
+function rect(x,y,w,h, color, lineColor) {
+  ctx.strokeStyle = lineColor || 'black';
   ctx.fillStyle = color;
   ctx.beginPath();
   ctx.rect(x, y, w, h);
@@ -365,17 +377,15 @@ function setKey(event, status) {
         keys['SHIFT'] = status;
         break;
     case 49:
-        player.currentPower = elements[0].name;
-        break;
     case 50:
-        player.currentPower = elements[1].name;
-        break;
     case 51:
-        player.currentPower = elements[2].name;
-        break;
     case 52:
-        player.currentPower = elements[3].name;
-        break;
+      var a = 3-(52-code);
+      // Activate element
+      if(elements.length > a){
+        player.currentPower = elements[a].name;
+      }
+      break;
 
     default:
     console.log(code);
