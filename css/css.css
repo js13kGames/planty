@@ -1,3 +1,8 @@
 .image {
 	display:none;
 }
+
+.instructions {
+	background: #EEEEEE;
+	font-family: monospace;
+}
