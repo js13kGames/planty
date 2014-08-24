@@ -27,11 +27,11 @@ var collidibles = [
 
 var pickups = [
   {x:Math.random()*width, y:Math.random()*height, w:10, h:10, onPickup: gain, color:'blue', name:'water'},
-  {x:Math.random()*width, y:Math.random()*height, w:10, h:10, onPickup: gain, color:'orange', name:'fire'}
-  //{x:Math.random()*width, y:Math.random()*height, w:10, h:10, onPickup: gain, name:'water'},
+  {x:Math.random()*width, y:Math.random()*height, w:10, h:10, onPickup: gain, color:'orange', name:'fire'},
+  {x:Math.random()*width, y:Math.random()*height, w:10, h:10, onPickup: gain, color:'brown', name:'earth'}
 ];
 
-var enemies = [{x:400, y:150, w:10, h:10, hp:10, speed:1}];
+var enemies = [{x:400, y:150, w:26, h:10, hp:10, speed:1}];
 
 var projectiles = [];
 
@@ -165,7 +165,21 @@ function shoot(){
       projectiles.push(p);
 
       player.cd = shootCD;
-    break;
+      break;
+
+    case 'fire':
+      var p = {x:player.x, y:player.y, w:5, h:5, color:'orange', tX:0, tY:0};
+      projectiles.push(p);
+
+      player.cd = shootCD;
+      break;
+
+    case 'earth':
+      var p = {x:player.x, y:player.y, w:5, h:5, color:'brown', tX:0, tY:0};
+      projectiles.push(p);
+
+      player.cd = shootCD;
+      break;
   }
 }
 
@@ -230,16 +244,17 @@ function gain(item){
   console.log('Gained water!');
 
   switch(item){
-    case 'water':    
-      player.currentPower = item;
+    case 'water':
       elements.push({name:item, color:'blue'});
     break;
     case 'fire':
-      player.currentPower = item;
       elements.push({name:item, color:'orange'});
     break;
-
+    case 'earth':
+      elements.push({name:item, color:'brown'});
+    break;
   }
+  player.currentPower = item;
 }
 
 // --- Drawing ---
@@ -266,7 +281,7 @@ function drawEnemies() {
     var o = enemies[i];
       ctx.fillStyle = 'orange';
       ctx.beginPath();
-      ctx.arc(enemies[i].x, enemies[i].y, enemies[i].w, 0, 360, false);
+      ctx.arc(enemies[i].x, enemies[i].y, enemies[i].w/2, 60, 270, false);
       ctx.stroke();
       ctx.fill();
   }
@@ -349,6 +364,19 @@ function setKey(event, status) {
     case 16:
         keys['SHIFT'] = status;
         break;
+    case 49:
+        player.currentPower = elements[0].name;
+        break;
+    case 50:
+        player.currentPower = elements[1].name;
+        break;
+    case 51:
+        player.currentPower = elements[2].name;
+        break;
+    case 52:
+        player.currentPower = elements[3].name;
+        break;
+
     default:
     console.log(code);
     }
