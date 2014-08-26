@@ -5,9 +5,9 @@ var height = c.height;
 var animateID = window.requestAnimationFrame(animate);
 var stop = false;
 
-var player = {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, currentPower:null};
+var player = {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null};
 var moveSpeed = 0;
-var spawnCD = 60;
+var spawnCD = 300;
 
 var projectileSpeed = 5;
 var shootCD = 20;
@@ -23,8 +23,8 @@ var collidibles = [
   {x:0,y:0,w:width,h:10},
 
   // Inner walls
-  {x:0,y:80, w:300, h:10, type:'fire'},
-  {x:80, y:400, w:10, h:200, type:'air'},
+  {x:10,y:80, w:300, h:10, type:'fire'},
+  {x:80, y:400, w:10, h:190, type:'air'},
   {x:600, y:350, w:10, h:250, type:'spirit'},
   {x:600, y:80, w:10, h: 80, type:'earth'},
   {x:600, y:160, w:80, h:10, type:'earth'},
@@ -70,7 +70,8 @@ function animate(timestamp){
 
   if(spawnCD-- <= 0){
     spawnCD = 120;
-    enemies.push({x:400, y:150, w:26, h:26, hp:10, speed:Math.random() + .5})
+    var element = ['fire','earth','water','air'][Math.floor(Math.random()*4)];
+    enemies.push({x:400, y:150, w:26, h:26, hp:10, speed:Math.random() + .5, type:element})
   }
 
   // Clear canvas
@@ -82,6 +83,7 @@ function animate(timestamp){
   drawPickups();
   drawProjectiles();
   drawEnemies();
+  collideEnemies();
 
   // Move player or collide with walls
   moving = checkMove('LEFT',  'x', true)  || moving;
@@ -102,7 +104,7 @@ function animate(timestamp){
   collideProjecties();
 
 // Shoot  
-  if(keys['SPACE'] && player.cd <= 0 && player.currentPower){
+  if(keys['SPACE'] && player.cd <= 0 && player.element){
     // Shoot
     drawPlant('Shoot');
     shoot();
@@ -150,7 +152,7 @@ function checkMove(direction, moveProperty, invert){
     }
 
     index = collision(player, collidibles);
-    if(index > -1 && player.currentPower !== collidibles[index].type){
+    if(index > -1 && player.element !== collidibles[index].type){
       // Collided with object
       if(invert){
         player[moveProperty] += moveSpeed;
@@ -176,16 +178,40 @@ function collideProjecties(){
       // Collision with enemies
       index = collision(projectiles[i], enemies);
       if(index > -1){
-        projectiles.splice(i,1);
-        enemies.splice(index,1);
+        if(player.element === enemies[index].type){
+          // Same element, enemy gets stronger
+          enemies[index].w+=2;
+          enemies[index].h+=2;
+        }else{
+          // Different element, kill element
+          projectiles.splice(i,1);
+          enemies.splice(index,1);
+        }
       }
+    }
+  }
+}
+
+function collideEnemies(){
+  for(i=0; i<enemies.length; i++){
+    var o = enemies[i];
+    var index = collision(o, collidibles);
+
+    o.x += (o.x < player.x) ? o.speed : -o.speed;
+    o.y += (o.y < player.y) ? o.speed : -o.speed;
+
+    if(index === -1 || o.type === collidibles[index].type){
+      // Enemy can pass
+    }else{
+      o.x -= (o.x < player.x) ? o.speed : -o.speed;
+      o.y -= (o.y < player.y) ? o.speed : -o.speed;
     }
   }
 }
 
 function shoot() {
 
-  var p = {x:player.x, y:player.y, w:3, h:3, color:colors[player.currentPower], tX:0, tY:0};
+  var p = {x:player.x, y:player.y, w:3, h:3, color:colors[player.element], tX:0, tY:0};
 
   p = modDirection(p);
   projectiles.push(p);
@@ -252,7 +278,9 @@ function pickup(){
 function gain(item){
 
   elements.push({type:item, color: colors[item]});
-  player.currentPower = item;
+  if(elements.length === 1){
+    player.element = item;
+  }
 }
 
 function die(){
@@ -291,9 +319,7 @@ function drawEnemies() {
   var i;
   for(i=0; i<enemies.length; i++){
     var o = enemies[i];
-    o.x += (o.x < player.x) ? o.speed : -o.speed;
-    o.y += (o.y < player.y) ? o.speed : -o.speed;
-    rect(o.x, o.y, o.w, o.h, 'ghostwhite', 'purple');
+    rect(o.x, o.y, o.w, o.h, colors[o.type], 'purple');
   }
 }
  
@@ -328,7 +354,7 @@ function drawPlant(state) {
   
   for(i=0; i<elements.length; i++){
     var e = elements[i];
-    var w = (player.currentPower === e.type) ? 6 : 5;
+    var w = (player.element === e.type) ? 6 : 5;
     rect(x + (i*5), y, w, w, e.color);
   }
 
@@ -381,8 +407,8 @@ function setKey(event, status) {
     case 52:
       var a = 3-(52-code);
       // Activate element
-      if(elements.length > a){
-        player.currentPower = elements[a].type;
+      if(elements.length > 0){
+        player.element = elements[a].type;
       }
       break;
 
