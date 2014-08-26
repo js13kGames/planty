@@ -7,6 +7,8 @@ var stop = false;
 
 var player = {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, currentPower:null};
 var moveSpeed = 0;
+var spawnCD = 60;
+
 var projectileSpeed = 5;
 var shootCD = 20;
 var keys = [];
@@ -25,19 +27,24 @@ var collidibles = [
   {x:80, y:400, w:10, h:200, type:'air'},
   {x:600, y:350, w:10, h:250, type:'spirit'},
   {x:600, y:80, w:10, h: 80, type:'earth'},
-  {x:600, y:160, w:80, h:10, type:'earth'}
+  {x:600, y:160, w:80, h:10, type:'earth'},
+
+  {x:10, y:400, w:80, h:10, type:'water'},
+
+  {x:400, y:300, w:10, h:80, type:'water'},
+  {x:480, y:300, w:10, h:80, type:'water'},
+  {x:410, y:370, w:80, h:10, type:'water'},
+  {x:400, y:300, w:80, h:10, type:'water'}
 ];
 
 var pickups = [
-  {x:100, y:140, w:10, h:10, onPickup: gain, name:'water'},
-  {x:40, y:height-30, w:10, h:10, onPickup: gain, name:'fire'},
-  {x:20, y:40, w:10, h:10, onPickup: gain, name:'earth'},
-  {x:620, y:60, w:10, h:10, onPickup: gain, name:'air'}
+  {x:20, y:40, w:10, h:10, onPickup: gain, type:'water'},
+  {x:40, y:height-30, w:10, h:10, onPickup: gain, type:'fire'},
+  {x:440, y:335, w:10, h:10, onPickup: gain, type:'earth'},
+  {x:620, y:140, w:10, h:10, onPickup: gain, type:'air'}
 ];
 
-var enemies = [{x:400, y:150, w:26, h:26, hp:10, speed:1},
-  {x:300, y:150, w:26, h:26, hp:10, speed:0.6}
-];
+var enemies = [];
 
 var projectiles = [];
 
@@ -61,6 +68,11 @@ function animate(timestamp){
     frameCount = 0;
   }
 
+  if(spawnCD-- <= 0){
+    spawnCD = 120;
+    enemies.push({x:400, y:150, w:26, h:26, hp:10, speed:Math.random() + .5})
+  }
+
   // Clear canvas
   ctx.save();
   ctx.clearRect(0,0,width,height);
@@ -76,6 +88,12 @@ function animate(timestamp){
   moving = checkMove('RIGHT', 'x', false) || moving;
   moving = checkMove('UP',    'y', true)  || moving;
   moving = checkMove('DOWN',  'y', false) || moving;
+
+  // Check collision with enemies
+  var index = collision(player, enemies);
+  if(index > -1) {
+    die();
+  }
 
   // Collide with pickups
   pickup();
@@ -115,7 +133,7 @@ function animate(timestamp){
   ctx.restore();
 
   if (stop === false) {
-      window.requestAnimationFrame(animate);
+      animateID = window.requestAnimationFrame(animate);
     }
 }
 
@@ -130,8 +148,9 @@ function checkMove(direction, moveProperty, invert){
     }else{
       player[moveProperty] += moveSpeed;
     }
-    var index = collision(player, collidibles);
-    if(index > -1 && player.currentPower != collidibles[index].type){
+
+    index = collision(player, collidibles);
+    if(index > -1 && player.currentPower !== collidibles[index].type){
       // Collided with object
       if(invert){
         player[moveProperty] += moveSpeed;
@@ -140,7 +159,7 @@ function checkMove(direction, moveProperty, invert){
       }
     }else{
       return true;
-    }    
+    }   
   }
   return false;
 }
@@ -223,7 +242,7 @@ function pickup(){
     var o = pickups[i];
     if((player.x + player.w > o.x && player.x < o.x+o.w) &&
       (player.y + player.h > o.y && player.y < o.y+o.h)){
-      o.onPickup(o.name);
+      o.onPickup(o.type);
       pickups.splice(i,1);
       break;
     }
@@ -232,8 +251,22 @@ function pickup(){
 
 function gain(item){
 
-  elements.push({name:item, color: colors[item]});
+  elements.push({type:item, color: colors[item]});
   player.currentPower = item;
+}
+
+function die(){
+  window.cancelAnimationFrame(animateID);
+  stop = true;
+
+  document.getElementById('dead').classList.remove('hidden');
+  document.getElementById('content').classList.add('hidden');
+
+  document.getElementById('btn').focus();
+}
+
+function again(){
+  window.location = '';
 }
 
 // --- Drawing ---
@@ -242,7 +275,7 @@ function drawPickups() {
   var i;
   for(i=0; i<pickups.length; i++){
     var o = pickups[i];
-    rect(o.x, o.y, o.w, o.h, colors[o.name]);
+    rect(o.x, o.y, o.w, o.h, colors[o.type]);
   }
 }
 
@@ -295,7 +328,7 @@ function drawPlant(state) {
   
   for(i=0; i<elements.length; i++){
     var e = elements[i];
-    var w = (player.currentPower === e.name) ? 6 : 5;
+    var w = (player.currentPower === e.type) ? 6 : 5;
     rect(x + (i*5), y, w, w, e.color);
   }
 
@@ -349,7 +382,7 @@ function setKey(event, status) {
       var a = 3-(52-code);
       // Activate element
       if(elements.length > a){
-        player.currentPower = elements[a].name;
+        player.currentPower = elements[a].type;
       }
       break;
 

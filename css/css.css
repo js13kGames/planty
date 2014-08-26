@@ -7,3 +7,18 @@
 	font-family: monospace;
 	padding: 5px;
 }
+
+#dead {
+	font-family: monospace;
+	font-size: -webkit-xxx-large;
+	font-variant: small-caps;
+}
+
+.hidden {
+	display: none;
+}
+
+.sexy {
+	background: ghostwhite;
+	font-family: monospace;
+}

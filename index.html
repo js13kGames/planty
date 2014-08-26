@@ -10,13 +10,22 @@
 
 			<canvas id="game" width="800" height="600" style="border:1px solid #CCCCCC;"> </canvas>
 
+			<div>
+			Pick up the elements to enable to you pass through walls
+			</div>
+
+			<div>
+				<hr>
+				<p>Movement <span class='instructions'>WASD</span> or <span class='instructions'>&leftarrow; &rightarrow; &uparrow; &downarrow;</span> Sprint <span class='instructions'>SHIFT</span> Shoot <span class='instructions'>SPACE</span> Change element <span class='instructions'>1234</span> </p>
+				<hr>
+			</div>
+
 		</div>
 
-		<div>
-			<hr>
-			<p>Movement <span class='instructions'>WASD</span> or <span class='instructions'>&leftarrow; &rightarrow; &uparrow; &downarrow;</span> Sprint <span class='instructions'>SHIFT</span> Shoot <span class='instructions'>SPACE</span> Change element <span class='instructions'>1234</span> </p>
-			<hr>
+		<div id='dead' class='hidden'>
+			dead :(
 		</div>
+		<button id='btn' onclick='again()'>Restart</button>
 
 	</body>
 
