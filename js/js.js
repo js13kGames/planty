@@ -55,12 +55,16 @@ levels[0] = {
     {x:40, y:height-30, w:10, h:10, type:'fire'},
     {x:440, y:335, w:10, h:10, type:'earth'},
     {x:620, y:140, w:10, h:10, type:'air'}
+  ],
+  finish : [
+    {x:620, y:510, w:160, h:70}
   ]
 }
 
 var collidibles = levels[currentLevel].collidibles;
 var spawns = levels[currentLevel].spawns;
 var pickups = levels[currentLevel].pickups;
+var finish = levels[currentLevel].finish[0];
 
 var elements = [];
 var colors = {'fire':'orange', 'water':'aqua', 'earth':'brown', 'air':'ghostwhite', 'spirit':'black'};
@@ -114,6 +118,8 @@ function animate(timestamp){
   drawProjectiles();
   drawSpawns();
   drawEnemies();
+  drawFinish();
+
   collideEnemies();
 
   // Move player or collide with walls
@@ -382,6 +388,12 @@ function drawSpawns() {
   }
 }
 
+function drawFinish() {
+  ctx.fillStyle = "gray";
+  ctx.font = "20pt Helvetica";
+  ctx.fillText("Exit", finish.x+55, finish.y+45);
+}
+
 function rect(x,y,w,h, color, lineColor) {
   ctx.strokeStyle = lineColor || 'black';
   ctx.fillStyle = color;
@@ -454,6 +466,10 @@ function setKey(event, status) {
     case 50:
     case 51:
     case 52:
+    case 97:
+    case 98:
+    case 99:
+    case 100:
       var a = 3-(52-code);
       // Activate element
       if(elements.length > 0){
