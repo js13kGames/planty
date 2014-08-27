@@ -466,11 +466,17 @@ function setKey(event, status) {
     case 50:
     case 51:
     case 52:
+      var a = 3-(52-code);
+      // Activate element
+      if(elements.length > 0){
+        player.element = elements[a].type;
+      }
+      break;
     case 97:
     case 98:
     case 99:
     case 100:
-      var a = 3-(52-code);
+      var a = 3-(100-code);
       // Activate element
       if(elements.length > 0){
         player.element = elements[a].type;
