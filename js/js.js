@@ -3,49 +3,68 @@ var ctx = c.getContext("2d");
 var width = c.width;
 var height = c.height;
 var animateID = window.requestAnimationFrame(animate);
-var stop = false;
+var stop = true;
+var i;
 
-var player = {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null};
+var defaultPlayer = {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null};
+var player = defaultPlayer;
 var moveSpeed = 0;
-var spawnCD = 300;
-
 var projectileSpeed = 5;
 var shootCD = 20;
+
+var enemyWidth = 20;
+
 var keys = [];
 var frameCount = 0;
+
+var currentLevel = 0;
+var levels = [];
+
+levels[0] = {
+  collidibles : [
+    // Outer Walls
+    {x:0,y:0,w:10,h:height},
+    {x:width-10,y:0,w:10,h:height},
+    {x:0,y:height-10,w:width,h:10},
+    {x:0,y:0,w:width,h:10},
+
+    // Inner walls
+    {x:10,y:80, w:300, h:10, type:'fire'},
+    {x:80, y:400, w:10, h:190, type:'air'},
+    {x:600, y:350, w:10, h:250, type:'spirit'},
+    {x:600, y:80, w:10, h: 80, type:'earth'},
+    {x:600, y:160, w:80, h:10, type:'earth'},
+
+    {x:10, y:400, w:80, h:10, type:'water'},
+
+    {x:400, y:300, w:10, h:80, type:'water'},
+    {x:480, y:300, w:10, h:80, type:'water'},
+    {x:410, y:370, w:80, h:10, type:'water'},
+    {x:400, y:300, w:80, h:10, type:'water'},
+
+    {x:610, y:400, w:180, h:10, type:'fire'},
+    {x:610, y:430, w:180, h:10, type:'air'},
+    {x:610, y:460, w:180, h:10, type:'earth'},
+    {x:610, y:490, w:180, h:10, type:'water'},
+  ],
+  spawns : [
+    {x:400,y:250,w:10,h:10, nextElement:'fire', cd:120}
+  ],
+  pickups : [
+    {x:20, y:40, w:10, h:10, type:'water'},
+    {x:40, y:height-30, w:10, h:10, type:'fire'},
+    {x:440, y:335, w:10, h:10, type:'earth'},
+    {x:620, y:140, w:10, h:10, type:'air'}
+  ]
+}
+
+var collidibles = levels[currentLevel].collidibles;
+var spawns = levels[currentLevel].spawns;
+var pickups = levels[currentLevel].pickups;
+
 var elements = [];
-var colors = {'fire':'orange', 'water':'blue', 'earth':'brown', 'air':'ghostwhite', 'spirit':'black'};
-var collidibles = [
-  // Outer Walls
-  {x:0,y:0,w:10,h:height},
-  {x:width-10,y:0,w:10,h:height},
-  {x:0,y:height-10,w:width,h:10},
-  {x:0,y:0,w:width,h:10},
-
-  // Inner walls
-  {x:10,y:80, w:300, h:10, type:'fire'},
-  {x:80, y:400, w:10, h:190, type:'air'},
-  {x:600, y:350, w:10, h:250, type:'spirit'},
-  {x:600, y:80, w:10, h: 80, type:'earth'},
-  {x:600, y:160, w:80, h:10, type:'earth'},
-
-  {x:10, y:400, w:80, h:10, type:'water'},
-
-  {x:400, y:300, w:10, h:80, type:'water'},
-  {x:480, y:300, w:10, h:80, type:'water'},
-  {x:410, y:370, w:80, h:10, type:'water'},
-  {x:400, y:300, w:80, h:10, type:'water'}
-];
-
-var pickups = [
-  {x:20, y:40, w:10, h:10, onPickup: gain, type:'water'},
-  {x:40, y:height-30, w:10, h:10, onPickup: gain, type:'fire'},
-  {x:440, y:335, w:10, h:10, onPickup: gain, type:'earth'},
-  {x:620, y:140, w:10, h:10, onPickup: gain, type:'air'}
-];
-
+var colors = {'fire':'orange', 'water':'aqua', 'earth':'brown', 'air':'ghostwhite', 'spirit':'black'};
 var enemies = [];
-
 var projectiles = [];
 
 
@@ -68,10 +87,21 @@ function animate(timestamp){
     frameCount = 0;
   }
 
-  if(spawnCD-- <= 0){
-    spawnCD = 120;
-    var element = ['fire','earth','water','air'][Math.floor(Math.random()*4)];
-    enemies.push({x:400, y:150, w:26, h:26, hp:10, speed:Math.random() + .5, type:element})
+  for(i=0; i<spawns.length; i++){
+    if(spawns[i].cd-- <= 0){
+      spawns[i].cd = 120;
+      
+      enemies.push(
+        { x:spawns[i].x, 
+          y:spawns[i].y, 
+          w:5, h:5, 
+          hp:10, 
+          speed:Math.random() + .5, 
+          type:spawns[i].nextElement
+        });
+
+      spawns[i].nextElement = ['fire','earth','water','air'][Math.floor(Math.random()*4)];
+    }
   }
 
   // Clear canvas
@@ -82,6 +112,7 @@ function animate(timestamp){
   drawCollidibles();
   drawPickups();
   drawProjectiles();
+  drawSpawns();
   drawEnemies();
   collideEnemies();
 
@@ -268,7 +299,7 @@ function pickup(){
     var o = pickups[i];
     if((player.x + player.w > o.x && player.x < o.x+o.w) &&
       (player.y + player.h > o.y && player.y < o.y+o.h)){
-      o.onPickup(o.type);
+      gain(o.type);
       pickups.splice(i,1);
       break;
     }
@@ -287,20 +318,26 @@ function die(){
   window.cancelAnimationFrame(animateID);
   stop = true;
 
+  document.getElementById('btn').classList.remove('hidden');
   document.getElementById('dead').classList.remove('hidden');
-  document.getElementById('content').classList.add('hidden');
-
+  document.getElementById('content').classList.add('disabled');
   document.getElementById('btn').focus();
+  document.getElementById('dead').classList.remove('disabled');
+  document.getElementById('btn').innerHTML = 'Try again';
 }
 
 function again(){
-  window.location = '';
+  console.log(window.location);
+  if(window.location.search.indexOf('autoStart') === -1){
+    window.location = window.location += '?autoStart';
+  }else{
+    window.location = '';
+  }
 }
 
 // --- Drawing ---
 
 function drawPickups() {
-  var i;
   for(i=0; i<pickups.length; i++){
     var o = pickups[i];
     rect(o.x, o.y, o.w, o.h, colors[o.type]);
@@ -308,7 +345,6 @@ function drawPickups() {
 }
 
 function drawCollidibles() {
-  var i;
   for(i=0; i<collidibles.length; i++){
     var o = collidibles[i];
     rect(o.x, o.y, o.w, o.h, colors[o.type]);
@@ -316,20 +352,33 @@ function drawCollidibles() {
 }
 
 function drawEnemies() {
-  var i;
   for(i=0; i<enemies.length; i++){
     var o = enemies[i];
+    if(o.w < enemyWidth){
+      o.w++;
+      o.h++;
+    }
     rect(o.x, o.y, o.w, o.h, colors[o.type], 'purple');
   }
 }
  
-function drawProjectiles(){
-  var i;
+function drawProjectiles() {
   for(i=0; i<projectiles.length; i++){
     var o = projectiles[i];
     o.x += o.tX;
     o.y += o.tY;
     rect(o.x, o.y, o.w, o.h, o.color);
+  }
+}
+
+function drawSpawns() {
+  for(i=0; i<spawns.length; i++){
+    ctx.strokeStyle = 'black';
+    ctx.fillStyle = colors[spawns[i].nextElement];
+    ctx.beginPath();
+    ctx.arc(spawns[i].x, spawns[i].y, spawns[i].w, 0, Math.PI*2, true );
+    ctx.stroke();
+    ctx.fill();
   }
 }
 
@@ -430,3 +479,11 @@ document.addEventListener('keyup', function(e) {
 window.addEventListener('blur', function() {
     keys = [];
 });
+
+function onLoad(){
+  if(location.search.indexOf('autoStart') > -1){
+    stop = false;
+    document.getElementById('content').classList.remove('disabled');
+    document.getElementById('btn').classList.add('hidden');
+  }
+}

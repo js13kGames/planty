@@ -8,17 +8,34 @@
 	padding: 5px;
 }
 
+button {
+	width: 200px;
+	font-family: cursive;
+	font-size: 30px;
+	position: absolute;
+	top: 265px;
+	left: 300px;
+	right: auto;
+	padding: 20px;
+}
+
 #dead {
 	font-family: monospace;
 	font-size: -webkit-xxx-large;
 	font-variant: small-caps;
+	top: 165px;
+	position: absolute;
+	left: 333px;
 }
 
 .hidden {
 	display: none;
 }
 
-.sexy {
-	background: ghostwhite;
+.container {
 	font-family: monospace;
+}
+
+.disabled {
+	opacity:0.5;
 }
