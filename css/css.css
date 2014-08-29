@@ -10,8 +10,10 @@
 
 button {
 	width: 200px;
-	font-family: cursive;
+	font-family: monospace;
 	font-size: 30px;
+	color: white;
+	background-image: -webkit-linear-gradient(top, gray, black);
 	position: absolute;
 	top: 265px;
 	left: 300px;
@@ -34,6 +36,10 @@ button {
 
 .container {
 	font-family: monospace;
+}
+
+.game {
+
 }
 
 .disabled {

@@ -2,12 +2,11 @@ var c = document.getElementById("game");
 var ctx = c.getContext("2d");
 var width = c.width;
 var height = c.height;
-var animateID = window.requestAnimationFrame(animate);
+var animateID;
 var stop = true;
 var i;
 
-var defaultPlayer = {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null};
-var player = defaultPlayer;
+var player;
 var moveSpeed = 0;
 var projectileSpeed = 5;
 var shootCD = 20;
@@ -20,6 +19,7 @@ var frameCount = 0;
 var currentLevel = 0;
 var levels = [];
 
+// Level0
 levels[0] = {
   collidibles : [
     // Outer Walls
@@ -58,13 +58,44 @@ levels[0] = {
   ],
   finish : [
     {x:620, y:510, w:160, h:70}
-  ]
-}
+  ],
+  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
+};
 
-var collidibles = levels[currentLevel].collidibles;
-var spawns = levels[currentLevel].spawns;
-var pickups = levels[currentLevel].pickups;
-var finish = levels[currentLevel].finish[0];
+// Level1 
+levels[1] = {
+  collidibles : [
+    // Outer Walls
+    {x:0,y:0,w:10,h:height},
+    {x:width-10,y:0,w:10,h:height},
+    {x:0,y:height-10,w:width,h:10},
+    {x:0,y:0,w:width,h:10},
+
+    // Inner walls
+    {x:10,y:80, w:300, h:10, type:'fire'},
+    {x:160, y:490, h:100, w:10, type:'water'},
+    {x:190, y:490, h:100, w:10, type:'fire'},
+    {x:220, y:490, h:100, w:10, type:'earth'},
+    {x:250, y:490, h:100, w:10, type:'air'},
+    {x:10, y:480, h:10, w:260, type:'spirit'},
+
+  ],
+  spawns : [
+    //{x:400,y:250,w:10,h:10, nextElement:'fire', cd:120}
+  ],
+  pickups : [
+    // {x:20, y:40, w:10, h:10, type:'water'},
+    // {x:40, y:height-30, w:10, h:10, type:'fire'},
+    // {x:440, y:335, w:10, h:10, type:'earth'},
+    // {x:620, y:140, w:10, h:10, type:'air'}
+  ],
+  finish : [
+    {x:0, y:510, w:50, h:50}
+  ],
+  player : {x:10, y:10, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
+};
+
+var collidibles , spawns, pickups, finish;
 
 var elements = [];
 var colors = {'fire':'orange', 'water':'aqua', 'earth':'brown', 'air':'ghostwhite', 'spirit':'black'};
@@ -121,6 +152,8 @@ function animate(timestamp){
   drawFinish();
 
   collideEnemies();
+
+  checkFinish();
 
   // Move player or collide with walls
   moving = checkMove('LEFT',  'x', true)  || moving;
@@ -246,6 +279,19 @@ function collideEnemies(){
   }
 }
 
+function finished(){
+  currentLevel++;
+  goLevel(currentLevel);
+}
+
+function checkFinish(){
+  if((player.x + player.w > finish.x && player.x < finish.x + finish.w) &&
+      (player.y + player.h > finish.y && player.y < finish.y + finish.h))
+  {
+    finished();
+  }
+}
+
 function shoot() {
 
   var p = {x:player.x, y:player.y, w:3, h:3, color:colors[player.element], tX:0, tY:0};
@@ -320,25 +366,29 @@ function gain(item){
   }
 }
 
+function get(id){
+  return document.getElementById(id);
+}
+
 function die(){
   window.cancelAnimationFrame(animateID);
   stop = true;
 
-  document.getElementById('btn').classList.remove('hidden');
-  document.getElementById('dead').classList.remove('hidden');
-  document.getElementById('content').classList.add('disabled');
-  document.getElementById('btn').focus();
-  document.getElementById('dead').classList.remove('disabled');
-  document.getElementById('btn').innerHTML = 'Try again';
+  get('btn').classList.remove('hidden');
+  get('dead').classList.remove('hidden');
+  get('content').classList.add('disabled');
+  get('btn').focus();
+  get('dead').classList.remove('disabled');
+  get('btn').innerHTML = 'Try again';
 }
 
 function again(){
-  console.log(window.location);
-  if(window.location.search.indexOf('autoStart') === -1){
-    window.location = window.location += '?autoStart';
-  }else{
-    window.location = '';
-  }
+  goLevel(currentLevel);
+}
+
+function goLevel(level){
+  var s = window.location.toString();
+  window.location = s.split('?')[0] + '?autoStart=1&level=' + level;
 }
 
 // --- Drawing ---
@@ -395,6 +445,7 @@ function drawFinish() {
 }
 
 function rect(x,y,w,h, color, lineColor) {
+
   ctx.strokeStyle = lineColor || 'black';
   ctx.fillStyle = color;
   ctx.beginPath();
@@ -408,9 +459,9 @@ function drawPlant(state) {
   var y = player.y;
 
   if(keys['LEFT'] || player.lastDirection === 'LEFT'){
-    flipImage(document.getElementById('planty' + state), x, y);
+    flipImage(get('planty' + state), x, y);
   }else{
-    ctx.drawImage(document.getElementById('planty' + state),x,y);
+    ctx.drawImage(get('planty' + state),x,y);
   }
   
   for(i=0; i<elements.length; i++){
@@ -441,23 +492,30 @@ function setKey(event, status) {
 
     switch(code) {
     case 32:
-        keys['SPACE'] = status; 
+        keys['SPACE'] = status;
+        if(stop === false){
+          event.preventDefault();
+        }
         break;
     case 37:
     case 65:
-        keys['LEFT'] = status; 
+        keys['LEFT'] = status;
+        event.preventDefault();
         break;
     case 38:
     case 87:
-        keys['UP'] = status; 
+        keys['UP'] = status;
+        event.preventDefault();
         break;
     case 39:
     case 68:
-        keys['RIGHT'] = status; 
+        keys['RIGHT'] = status;
+        event.preventDefault();
         break;
     case 40:
     case 83:
-        keys['DOWN'] = status; 
+        keys['DOWN'] = status;
+        event.preventDefault();
         break;
     case 16:
         keys['SHIFT'] = status;
@@ -503,9 +561,37 @@ window.addEventListener('blur', function() {
 });
 
 function onLoad(){
-  if(location.search.indexOf('autoStart') > -1){
+  var u = location.search;
+  if(u.indexOf('autoStart') > -1){
+    
+    c.classList.remove('disabled');
+    get('btn').classList.add('hidden');
+
+    var q = qs(location.search);
+    console.log(q);
+    currentLevel = parseInt(q.level);
+
+    collidibles = levels[currentLevel].collidibles;
+    spawns = levels[currentLevel].spawns;
+    pickups = levels[currentLevel].pickups;
+    finish = levels[currentLevel].finish[0];
+    player = levels[currentLevel].player;
+
     stop = false;
-    document.getElementById('content').classList.remove('disabled');
-    document.getElementById('btn').classList.add('hidden');
+    animateID = window.requestAnimationFrame(animate);
   }
+}
+
+function qs(qs) {
+    qs = qs.split("+").join(" ");
+
+    var params = {}, tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])]
+            = decodeURIComponent(tokens[2]);
+    }
+
+    return params;
 }
