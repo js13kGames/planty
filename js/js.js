@@ -30,11 +30,15 @@ levels[1] = {
 
     // Inner walls
     {x:10, y:400, w:80, h:10, type:'water'},
+
     {x:400, y:300, w:10, h:80, type:'water'},
     {x:480, y:300, w:10, h:80, type:'water'},
     {x:410, y:370, w:80, h:10, type:'water'},
     {x:400, y:300, w:80, h:10, type:'water'},
-    {x:610, y:490, w:180, h:10, type:'water'},
+
+    {x:210, y:490, w:180, h:10, type:'water'},
+    {x:210, y:490, w:10, h:100, type:'water'},
+    {x:390, y:490, w:10, h:100, type:'water'},
   ],
   spawns : [
     {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air'], cd:120}
@@ -43,7 +47,7 @@ levels[1] = {
     {x:20, y:40, w:10, h:10, type:'water'}
   ],
   finish : [
-    {x:620, y:510, w:160, h:70}
+    {x:220, y:510, w:160, h:70}
   ],
   player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
 };
@@ -70,6 +74,7 @@ levels[2] = {
 
     {x:610, y:430, w:180, h:10, type:'air'},
     {x:610, y:490, w:180, h:10, type:'water'},
+    {x:600, y:390, w:10, h:200, type:'spirit'},
   ],
   spawns : [
     {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air'], cd:120}
