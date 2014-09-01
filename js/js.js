@@ -16,11 +16,11 @@ var enemyWidth = 20;
 var keys = [];
 var frameCount = 0;
 
-var currentLevel = 0;
+var currentLevel = 1;
 var levels = [];
 
-// Level0
-levels[0] = {
+// Level1 the water level
+levels[1] = {
   collidibles : [
     // Outer Walls
     {x:0,y:0,w:10,h:height},
@@ -29,11 +29,37 @@ levels[0] = {
     {x:0,y:0,w:width,h:10},
 
     // Inner walls
-    {x:10,y:80, w:300, h:10, type:'fire'},
+    {x:10, y:400, w:80, h:10, type:'water'},
+    {x:400, y:300, w:10, h:80, type:'water'},
+    {x:480, y:300, w:10, h:80, type:'water'},
+    {x:410, y:370, w:80, h:10, type:'water'},
+    {x:400, y:300, w:80, h:10, type:'water'},
+    {x:610, y:490, w:180, h:10, type:'water'},
+  ],
+  spawns : [
+    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air'], cd:120}
+  ],
+  pickups : [
+    {x:20, y:40, w:10, h:10, type:'water'}
+  ],
+  finish : [
+    {x:620, y:510, w:160, h:70}
+  ],
+  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
+};
+
+
+// Level1 the air + water level
+levels[2] = {
+  collidibles : [
+    // Outer Walls
+    {x:0,y:0,w:10,h:height},
+    {x:width-10,y:0,w:10,h:height},
+    {x:0,y:height-10,w:width,h:10},
+    {x:0,y:0,w:width,h:10},
+
+    // Inner walls
     {x:80, y:400, w:10, h:190, type:'air'},
-    {x:600, y:350, w:10, h:250, type:'spirit'},
-    {x:600, y:80, w:10, h: 80, type:'earth'},
-    {x:600, y:160, w:80, h:10, type:'earth'},
 
     {x:10, y:400, w:80, h:10, type:'water'},
 
@@ -42,13 +68,11 @@ levels[0] = {
     {x:410, y:370, w:80, h:10, type:'water'},
     {x:400, y:300, w:80, h:10, type:'water'},
 
-    {x:610, y:400, w:180, h:10, type:'fire'},
     {x:610, y:430, w:180, h:10, type:'air'},
-    {x:610, y:460, w:180, h:10, type:'earth'},
     {x:610, y:490, w:180, h:10, type:'water'},
   ],
   spawns : [
-    {x:400,y:250,w:10,h:10, nextElement:'fire', cd:120}
+    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air'], cd:120}
   ],
   pickups : [
     {x:20, y:40, w:10, h:10, type:'water'},
@@ -62,8 +86,93 @@ levels[0] = {
   player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
 };
 
-// Level1 
-levels[1] = {
+// Level3 - the air water and earth level
+levels[3] = {
+  collidibles : [
+    // Outer Walls
+    {x:0,y:0,w:10,h:height},
+    {x:width-10,y:0,w:10,h:height},
+    {x:0,y:height-10,w:width,h:10},
+    {x:0,y:0,w:width,h:10},
+
+    // Inner walls
+    {x:80, y:400, w:10, h:190, type:'air'},
+    {x:600, y:350, w:10, h:250, type:'spirit'},
+    {x:600, y:80, w:10, h: 80, type:'earth'},
+    {x:600, y:160, w:80, h:10, type:'earth'},
+
+    {x:10, y:400, w:80, h:10, type:'water'},
+
+    {x:400, y:300, w:10, h:80, type:'water'},
+    {x:480, y:300, w:10, h:80, type:'water'},
+    {x:410, y:370, w:80, h:10, type:'water'},
+    {x:400, y:300, w:80, h:10, type:'water'},
+
+    {x:610, y:430, w:180, h:10, type:'air'},
+    {x:610, y:460, w:180, h:10, type:'earth'},
+    {x:610, y:490, w:180, h:10, type:'water'},
+  ],
+  spawns : [
+    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air', 'water'], cd:120}
+  ],
+  pickups : [
+    {x:20, y:40, w:10, h:10, type:'water'},
+    {x:40, y:height-30, w:10, h:10, type:'fire'},
+    {x:440, y:335, w:10, h:10, type:'earth'},
+    {x:620, y:140, w:10, h:10, type:'air'}
+  ],
+  finish : [
+    {x:620, y:510, w:160, h:70}
+  ],
+  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
+};
+
+
+
+
+// Level4 - the air water spirit and earth level
+levels[4] = {
+  collidibles : [
+    // Outer Walls
+    {x:0,y:0,w:10,h:height},
+    {x:width-10,y:0,w:10,h:height},
+    {x:0,y:height-10,w:width,h:10},
+    {x:0,y:0,w:width,h:10},
+
+    // Inner walls
+    {x:80, y:400, w:10, h:190, type:'air'},
+    {x:600, y:350, w:10, h:250, type:'spirit'},
+    {x:600, y:80, w:10, h: 80, type:'earth'},
+    {x:600, y:160, w:80, h:10, type:'earth'},
+
+    {x:10, y:400, w:80, h:10, type:'water'},
+
+    {x:400, y:300, w:10, h:80, type:'water'},
+    {x:480, y:300, w:10, h:80, type:'water'},
+    {x:410, y:370, w:80, h:10, type:'water'},
+    {x:400, y:300, w:80, h:10, type:'water'},
+
+    {x:610, y:430, w:180, h:10, type:'air'},
+    {x:610, y:460, w:180, h:10, type:'earth'},
+    {x:610, y:490, w:180, h:10, type:'water'},
+  ],
+  spawns : [
+    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air', 'water'], cd:120}
+  ],
+  pickups : [
+    {x:20, y:40, w:10, h:10, type:'water'},
+    {x:40, y:height-30, w:10, h:10, type:'fire'},
+    {x:440, y:335, w:10, h:10, type:'earth'},
+    {x:620, y:140, w:10, h:10, type:'air'}
+  ],
+  finish : [
+    {x:620, y:510, w:160, h:70}
+  ],
+  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
+};
+
+// Level5 FIRE!
+levels[5] = {
   collidibles : [
     // Outer Walls
     {x:0,y:0,w:10,h:height},
@@ -126,16 +235,15 @@ function animate(timestamp){
     if(spawns[i].cd-- <= 0){
       spawns[i].cd = 120;
       
+      var nextElement = spawns[i].availableElements[Math.floor(Math.random()*4)];
       enemies.push(
         { x:spawns[i].x, 
           y:spawns[i].y, 
           w:5, h:5, 
           hp:10, 
           speed:Math.random() + .5, 
-          type:spawns[i].nextElement
+          type:nextElement
         });
-
-      spawns[i].nextElement = ['fire','earth','water','air'][Math.floor(Math.random()*4)];
     }
   }
 
