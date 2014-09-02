@@ -114,7 +114,11 @@ levels[3] = {
     {x:0,y:0,w:width,h:10},
 
     // Inner walls
-    {x:80, y:400, w:10, h:190, type:'air'},
+
+    {x:10, y:80, w:80, h:10, type:'fire'},
+    {x:80, y:10, w:10, h:80, type:'fire'},
+
+    {x:80, y:400, w:10, h:190, type:'earth'},
     {x:600, y:350, w:10, h:250, type:'spirit'},
     {x:600, y:80, w:10, h: 80, type:'earth'},
     {x:600, y:160, w:80, h:10, type:'earth'},
@@ -126,6 +130,7 @@ levels[3] = {
     {x:410, y:370, w:80, h:10, type:'water'},
     {x:400, y:300, w:80, h:10, type:'water'},
 
+    {x:610, y:400, w:180, h:10, type:'fire'},
     {x:610, y:430, w:180, h:10, type:'air'},
     {x:610, y:460, w:180, h:10, type:'earth'},
     {x:610, y:490, w:180, h:10, type:'water'},
@@ -134,7 +139,7 @@ levels[3] = {
     {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air', 'water'], cd:120}
   ],
   pickups : [
-    {x:20, y:40, w:10, h:10, type:'water'},
+    {x:40, y:40, w:10, h:10, type:'water'},
     {x:40, y:height-30, w:10, h:10, type:'fire'},
     {x:440, y:335, w:10, h:10, type:'earth'},
     {x:620, y:140, w:10, h:10, type:'air'}
@@ -392,7 +397,6 @@ function collideEnemies(){
   for(i=0; i<enemies.length; i++){
     var o = enemies[i];
     
-
     o.x += (o.x < player.x) ? o.speed : -o.speed;
     var index = collision(o, collidibles);
 
@@ -410,7 +414,6 @@ function collideEnemies(){
     }else{
       o.y -= (o.y < player.y) ? o.speed : -o.speed;
     }
-
   }
 }
 
