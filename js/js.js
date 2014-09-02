@@ -5,6 +5,19 @@ var height = c.height;
 var animateID;
 var stop = true;
 var i;
+var root = this;
+
+var planty1 = new Image();
+planty1.src = "./images/planty1.gif";
+
+var planty2 = new Image();
+planty2.src = "./images/planty2.gif";
+
+var planty3 = new Image();
+planty3.src = "./images/planty3.gif";
+
+var plantyShoot = new Image();
+plantyShoot.src = "./images/plantyShoot.gif";
 
 var player;
 var moveSpeed = 0;
@@ -193,9 +206,6 @@ levels[5] = {
     {x:250, y:490, h:100, w:10, type:'air'},
     {x:10, y:480, h:10, w:260, type:'spirit'},
 
-    {x:470, y:10, h:180, w:10, type:'air'},
-    {x:490, y:10, h:180, w:10, type:'fire'},
-
   ],
   spawns : [
     //{x:400,y:250,w:10,h:10, nextElement:'fire', cd:120}
@@ -207,7 +217,7 @@ levels[5] = {
     // {x:620, y:140, w:10, h:10, type:'air'}
   ],
   finish : [
-    {x:0, y:500, w:50, h:50}
+    {x:0, y:510, w:50, h:50}
   ],
   player : {x:10, y:10, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
 };
@@ -215,7 +225,7 @@ levels[5] = {
 var collidibles , spawns, pickups, finish;
 
 var elements = [];
-var colors = {'fire':'#FA6900', 'water':'#046D8B', 'earth':'#784800', 'air':'ghostwhite', 'spirit':'black'};
+var colors = {'fire':'orange', 'water':'aqua', 'earth':'brown', 'air':'ghostwhite', 'spirit':'black'};
 var enemies = [];
 var projectiles = [];
 
@@ -575,9 +585,9 @@ function drawPlant(state) {
   var y = player.y;
 
   if(keys['LEFT'] || player.lastDirection === 'LEFT'){
-    flipImage(get('planty' + state), x, y);
+    flipImage(root['planty' + state], x, y);
   }else{
-    ctx.drawImage(get('planty' + state),x,y);
+    ctx.drawImage(root['planty' + state],x,y);
   }
   
   for(i=0; i<elements.length; i++){
@@ -677,7 +687,6 @@ window.addEventListener('blur', function() {
 });
 
 function onLoad(){
-
   var u = location.search;
   if(u.indexOf('autoStart') > -1){
     
