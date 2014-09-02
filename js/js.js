@@ -79,6 +79,9 @@ levels[1] = {
     {x:250, y:490, h:100, w:10, type:'air'},
     {x:10, y:480, h:10, w:260, type:'spirit'},
 
+    {x:470, y:10, h:180, w:10, type:'air'},
+    {x:490, y:10, h:180, w:10, type:'fire'},
+
   ],
   spawns : [
     //{x:400,y:250,w:10,h:10, nextElement:'fire', cd:120}
@@ -90,7 +93,7 @@ levels[1] = {
     // {x:620, y:140, w:10, h:10, type:'air'}
   ],
   finish : [
-    {x:0, y:510, w:50, h:50}
+    {x:0, y:500, w:50, h:50}
   ],
   player : {x:10, y:10, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
 };
@@ -98,7 +101,7 @@ levels[1] = {
 var collidibles , spawns, pickups, finish;
 
 var elements = [];
-var colors = {'fire':'orange', 'water':'aqua', 'earth':'brown', 'air':'ghostwhite', 'spirit':'black'};
+var colors = {'fire':'#FA6900', 'water':'#046D8B', 'earth':'#784800', 'air':'ghostwhite', 'spirit':'black'};
 var enemies = [];
 var projectiles = [];
 
@@ -561,6 +564,7 @@ window.addEventListener('blur', function() {
 });
 
 function onLoad(){
+
   var u = location.search;
   if(u.indexOf('autoStart') > -1){
     
