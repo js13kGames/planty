@@ -391,17 +391,26 @@ function collideProjecties(){
 function collideEnemies(){
   for(i=0; i<enemies.length; i++){
     var o = enemies[i];
-    var index = collision(o, collidibles);
+    
 
     o.x += (o.x < player.x) ? o.speed : -o.speed;
-    o.y += (o.y < player.y) ? o.speed : -o.speed;
+    var index = collision(o, collidibles);
 
     if(index === -1 || o.type === collidibles[index].type){
-      // Enemy can pass
+      // Enemy can pass on the x plane
     }else{
       o.x -= (o.x < player.x) ? o.speed : -o.speed;
+    }
+
+
+    o.y += (o.y < player.y) ? o.speed : -o.speed;
+    index = collision(o, collidibles);
+    if(index === -1 || o.type === collidibles[index].type){
+      // Enemy can pass on the y plane
+    }else{
       o.y -= (o.y < player.y) ? o.speed : -o.speed;
     }
+
   }
 }
 
@@ -486,6 +495,7 @@ function pickup(){
 
 function gain(item){
 
+  // Picked up an element
   elements.push({type:item, color: colors[item]});
   if(elements.length === 1){
     player.element = item;
@@ -537,6 +547,7 @@ function drawEnemies() {
   for(i=0; i<enemies.length; i++){
     var o = enemies[i];
     if(o.w < enemyWidth){
+      // Expand animation from spawn
       o.w++;
       o.h++;
     }
