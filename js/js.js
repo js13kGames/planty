@@ -54,7 +54,7 @@ levels[1] = {
     {x:390, y:490, w:10, h:100, type:'water'},
   ],
   spawns : [
-    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air'], nextElement:'earth', cd:120}
+    {x:400,y:250,w:10,h:10, availableTypes:['fire', 'earth', 'spirit', 'air'], nextElement:'earth', cd:120}
   ],
   pickups : [
     {x:40, y:40, w:10, h:10, type:'water'}
@@ -86,7 +86,7 @@ levels[2] = {
     {x:600, y:390, w:10, h:200, type:'spirit'},
   ],
   spawns : [
-    {x:350,y:370,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air'], nextElement:'air', cd:120}
+    {x:350,y:370,w:10,h:10, availableTypes:['fire', 'earth', 'spirit', 'air'], nextElement:'air', cd:120}
   ],
   pickups : [
     {x:280, y:40, w:10, h:10, type:'water'},
@@ -131,7 +131,7 @@ levels[3] = {
     {x:610, y:490, w:180, h:10, type:'water'},
   ],
   spawns : [
-    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air', 'water'], nextElement:'fire', cd:120}
+    {x:400,y:250,w:10,h:10, availableTypes:['fire', 'earth', 'spirit', 'air', 'water'], nextElement:'fire', cd:120}
   ],
   pickups : [
     {x:40, y:40, w:10, h:10, type:'water'},
@@ -180,8 +180,8 @@ levels[4] = {
     
   ],
   spawns : [
-    {x:500,y:540,w:10,h:10, availableElements:['fire', 'air', 'earth'], nextElement:'fire', cd:120},
-    {x:300,y:40,w:10,h:10, availableElements:['fire', 'water'], nextElement:'water', cd:120}
+    {x:500,y:540,w:10,h:10, availableTypes:['fire', 'air', 'earth'], nextElement:'fire', cd:120},
+    {x:300,y:40,w:10,h:10, availableTypes:['fire', 'water'], nextElement:'water', cd:120}
   ],
   pickups : [
     {x:40, y:40, w:10, h:10, type:'water'},
@@ -260,7 +260,7 @@ function animate(timestamp){
       spawns[i].cd = 120;
       
       var nextElement = spawns[i].nextElement; 
-      spawns[i].nextElement = spawns[i].availableElements[Math.floor(Math.random()*4)];
+      spawns[i].nextElement = spawns[i].availableTypes[Math.floor(Math.random()*4)];
       enemies.push(
         { x:spawns[i].x, 
           y:spawns[i].y, 

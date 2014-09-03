@@ -49,14 +49,11 @@ button {
 }
 
 .i {
-	transition-property: top;
-	transition-duration: 0.6s;
 	position: absolute;
 }
 
 #collect {
 	left:67px;
-	top:0px;
 }
 
 #avoid {
@@ -73,10 +70,6 @@ button {
 
 .container {
 	font-family: monospace;
-}
-
-.game {
-
 }
 
 .disabled {
