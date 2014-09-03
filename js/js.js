@@ -163,35 +163,41 @@ levels[4] = {
     {x:0,y:0,w:width,h:10},
 
     // Inner walls
-    {x:80, y:400, w:10, h:190, type:'air'},
-    {x:600, y:350, w:10, h:250, type:'spirit'},
-    {x:600, y:80, w:10, h: 80, type:'earth'},
-    {x:600, y:160, w:80, h:10, type:'earth'},
+    {x:10, y:100, w:100, h:10, type:'fire'},
 
-    {x:10, y:400, w:80, h:10, type:'water'},
+    {x:400, y:10, w:10, h:580, type:'fire'},
 
-    {x:400, y:300, w:10, h:80, type:'water'},
-    {x:480, y:300, w:10, h:80, type:'water'},
-    {x:410, y:370, w:80, h:10, type:'water'},
-    {x:400, y:300, w:80, h:10, type:'water'},
+    {x:600, y:10, w:10, h:150, type:'earth'},
+    {x:600, y:150, w:190, h:10, type:'earth'},
+    {x:600, y:250, w:10, h:250, type:'earth'},
 
-    {x:610, y:430, w:180, h:10, type:'air'},
-    {x:610, y:460, w:180, h:10, type:'earth'},
-    {x:610, y:490, w:180, h:10, type:'water'},
+    {x:600, y:490, w:10, h:100, type:'air'},
+    {x:600, y:490, w:190, h:10, type:'air'},
+
+    {x:500, y:300, w:50, h:10, type:'spirit'},
+    {x:550, y:250, w:60, h:10, type:'spirit'},
+    {x:550, y:250, w:10, h:60, type:'spirit'},
+    {x:500, y:300, w:10, h:60, type:'spirit'},
+
+    {x:100, y:500, w:100, h:10, type:'water'},
+    {x:100, y:10, w:10, h:500, type:'water'},
+    {x:200, y:10, w:10, h:500, type:'water'},
+    
   ],
   spawns : [
-    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air', 'water'], nextElement:'spirit', cd:120}
+    {x:500,y:540,w:10,h:10, availableElements:['fire', 'air', 'earth'], nextElement:'fire', cd:120},
+    {x:300,y:40,w:10,h:10, availableElements:['fire', 'water'], nextElement:'water', cd:120}
   ],
   pickups : [
-    {x:20, y:40, w:10, h:10, type:'water'},
-    {x:40, y:height-30, w:10, h:10, type:'fire'},
-    {x:440, y:335, w:10, h:10, type:'earth'},
-    {x:620, y:140, w:10, h:10, type:'air'}
+    {x:40, y:40, w:10, h:10, type:'water'},
+    {x:760, y:40, w:10, h:10, type:'fire'},
+    {x:580, y:290, w:10, h:10, type:'earth'},
+    {x:150, y:450, w:10, h:10, type:'air'}
   ],
   finish : [
     {x:620, y:510, w:160, h:70}
   ],
-  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
+  player : {x:500, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
 };
 
 // Level5 FIRE!
@@ -521,6 +527,8 @@ function die(){
   get('btn').focus();
   get('dead').classList.remove('disabled');
   get('btn').innerHTML = 'Try again';
+
+  get('dead').style.top = '597px';
 }
 
 function again(){
@@ -668,7 +676,7 @@ function setKey(event, status) {
     case 52:
       var a = 3-(52-code);
       // Activate element
-      if(elements.length > 0){
+      if(elements[a]){
         player.type = elements[a].type;
       }
       break;
@@ -678,7 +686,7 @@ function setKey(event, status) {
     case 100:
       var a = 3-(100-code);
       // Activate element
-      if(elements.length > 0){
+      if(elements[a]){
         player.type = elements[a].type;
       }
       break;

@@ -12,22 +12,34 @@ button {
 	width: 200px;
 	font-family: monospace;
 	font-size: 30px;
-	color: white;
-	background-image: -webkit-linear-gradient(top, gray, black);
+	color: antiquewhite;
+	background-image: -webkit-linear-gradient(top, black, maroon);
 	position: absolute;
 	top: 265px;
 	left: 300px;
 	right: auto;
-	padding: 20px;
+	padding: 12px;
+	border-radius: 53px;
+
 }
 
 #dead {
 	font-family: monospace;
-	font-size: -webkit-xxx-large;
-	font-variant: small-caps;
-	top: 165px;
+	font-size: xx-large;
+
+	transition-property: top;
+	transition-duration: 0.6s;
+
 	position: absolute;
-	left: 333px;
+	width: 800px;
+	left: 9px;
+	top: 0px;
+	text-align: center;
+	background-image: -webkit-linear-gradient(top, black, maroon);
+	color: antiquewhite;
+
+
+
 }
 
 .hidden {
