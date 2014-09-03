@@ -57,10 +57,10 @@ levels[1] = {
     {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air'], nextElement:'earth', cd:120}
   ],
   pickups : [
-    {x:20, y:40, w:10, h:10, type:'water'}
+    {x:40, y:40, w:10, h:10, type:'water'}
   ],
   finish : [
-    {x:220, y:510, w:160, h:70}
+    {x:225, y:510, w:160, h:70}
   ],
   player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
 };
@@ -528,7 +528,7 @@ function die(){
   get('dead').classList.remove('disabled');
   get('btn').innerHTML = 'Try again';
 
-  get('dead').style.top = '597px';
+  get('dead').style.top = '579px';
 }
 
 function again(){
@@ -634,6 +634,17 @@ function flipImage(image, x, y) {
   ctx.restore();
 }
 
+function showL1Instructions(){
+  get('l1i').style.display = 'block';
+  get('collect').style.top = '46px';
+  get('avoid').style.top = '251px';
+  get('go').style.top = '545px';
+}
+
+function hideL1Instructions(){
+  get('l1i').display = 'none';
+}
+
 
 // ---  Movement  ---
 
@@ -718,8 +729,13 @@ function onLoad(){
     get('btn').classList.add('hidden');
 
     var q = qs(location.search);
-    console.log(q);
     currentLevel = parseInt(q.level);
+
+    if(currentLevel === 1){
+      showL1Instructions();
+    }else{
+      hideL1Instructions();
+    }
 
     collidibles = levels[currentLevel].collidibles;
     spawns = levels[currentLevel].spawns;

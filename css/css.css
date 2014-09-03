@@ -12,10 +12,10 @@ button {
 	width: 200px;
 	font-family: monospace;
 	font-size: 30px;
-	color: antiquewhite;
-	background-image: -webkit-linear-gradient(top, black, maroon);
+	color: black;
+	background: linear-gradient(to bottom, #EAEAEA, white);
 	position: absolute;
-	top: 265px;
+	top: 280px;
 	left: 300px;
 	right: auto;
 	padding: 12px;
@@ -31,15 +31,40 @@ button {
 	transition-duration: 0.6s;
 
 	position: absolute;
-	width: 800px;
-	left: 9px;
+	width: 780px;
+	left: 19px;
 	top: 0px;
 	text-align: center;
-	background-image: -webkit-linear-gradient(top, black, maroon);
-	color: antiquewhite;
+	background: linear-gradient(to bottom, #EAEAEA, white, #EAEAEA);
+	color: black;
 
+}
 
+.l1Instructions {
+	display: none;
+	top:0px;
+	position: absolute;
+	width:800px;
+	height:600px;
+}
 
+.i {
+	transition-property: top;
+	transition-duration: 0.6s;
+	position: absolute;
+}
+
+#collect {
+	left:67px;
+	top:0px;
+}
+
+#avoid {
+	left:425px;
+}
+
+#go {
+	left:416px;
 }
 
 .hidden {
