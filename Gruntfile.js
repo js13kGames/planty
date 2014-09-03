@@ -3,12 +3,9 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     uglify: {
-      options: {
-        mangle: false
-      },
-      my_target: {
+      combine: {
         files: {
-          './build/js/js.js': ['./js/js.js']
+          './build/js/js.js' : ['./js/js.js']
         }
       }
     },

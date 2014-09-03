@@ -311,7 +311,7 @@ function animate(timestamp){
     // Shoot
     drawPlant('Shoot');
     shoot();
-  }else if(player.cd > 10){
+  }else if(player.cd > 15){
     // Just shot
     drawPlant('Shoot');
   }else{
