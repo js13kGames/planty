@@ -54,7 +54,7 @@ levels[1] = {
     {x:390, y:490, w:10, h:100, type:'water'},
   ],
   spawns : [
-    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air'], cd:120}
+    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air'], nextElement:'earth', cd:120}
   ],
   pickups : [
     {x:20, y:40, w:10, h:10, type:'water'}
@@ -62,7 +62,7 @@ levels[1] = {
   finish : [
     {x:220, y:510, w:160, h:70}
   ],
-  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
+  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
 };
 
 
@@ -90,7 +90,7 @@ levels[2] = {
     {x:600, y:390, w:10, h:200, type:'spirit'},
   ],
   spawns : [
-    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air'], cd:120}
+    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air'], nextElement:'air', cd:120}
   ],
   pickups : [
     {x:20, y:40, w:10, h:10, type:'water'},
@@ -101,7 +101,7 @@ levels[2] = {
   finish : [
     {x:620, y:510, w:160, h:70}
   ],
-  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
+  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
 };
 
 // Level3 - the air water and earth level
@@ -136,7 +136,7 @@ levels[3] = {
     {x:610, y:490, w:180, h:10, type:'water'},
   ],
   spawns : [
-    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air', 'water'], cd:120}
+    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air', 'water'], nextElement:'fire', cd:120}
   ],
   pickups : [
     {x:40, y:40, w:10, h:10, type:'water'},
@@ -147,7 +147,7 @@ levels[3] = {
   finish : [
     {x:620, y:510, w:160, h:70}
   ],
-  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
+  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
 };
 
 
@@ -180,7 +180,7 @@ levels[4] = {
     {x:610, y:490, w:180, h:10, type:'water'},
   ],
   spawns : [
-    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air', 'water'], cd:120}
+    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air', 'water'], nextElement:'spirit', cd:120}
   ],
   pickups : [
     {x:20, y:40, w:10, h:10, type:'water'},
@@ -191,7 +191,7 @@ levels[4] = {
   finish : [
     {x:620, y:510, w:160, h:70}
   ],
-  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
+  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
 };
 
 // Level5 FIRE!
@@ -224,7 +224,7 @@ levels[5] = {
   finish : [
     {x:0, y:510, w:50, h:50}
   ],
-  player : {x:10, y:10, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, element:null}
+  player : {x:10, y:10, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
 };
 
 var collidibles , spawns, pickups, finish;
@@ -258,7 +258,8 @@ function animate(timestamp){
     if(spawns[i].cd-- <= 0){
       spawns[i].cd = 120;
       
-      var nextElement = spawns[i].availableElements[Math.floor(Math.random()*4)];
+      var nextElement = spawns[i].nextElement; 
+      spawns[i].nextElement = spawns[i].availableElements[Math.floor(Math.random()*4)];
       enemies.push(
         { x:spawns[i].x, 
           y:spawns[i].y, 
