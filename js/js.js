@@ -77,31 +77,26 @@ levels[2] = {
 
     // Inner walls
     {x:80, y:400, w:10, h:190, type:'air'},
+    {x:10, y:400, w:80, h:10, type:'water'},    
 
-    {x:10, y:400, w:80, h:10, type:'water'},
+    {x:100, y:150, w:400, h:10, type:'earth'},
+    {x:300, y:10, w:10, h:150, type:'earth'},
 
-    {x:400, y:300, w:10, h:80, type:'water'},
-    {x:480, y:300, w:10, h:80, type:'water'},
-    {x:410, y:370, w:80, h:10, type:'water'},
-    {x:400, y:300, w:80, h:10, type:'water'},
-
-    {x:610, y:430, w:180, h:10, type:'air'},
-    {x:610, y:490, w:180, h:10, type:'water'},
+    {x:610, y:490, w:180, h:10, type:'fire'},
     {x:600, y:390, w:10, h:200, type:'spirit'},
   ],
   spawns : [
-    {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air'], nextElement:'air', cd:120}
+    {x:350,y:370,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air'], nextElement:'air', cd:120}
   ],
   pickups : [
-    {x:20, y:40, w:10, h:10, type:'water'},
+    {x:280, y:40, w:10, h:10, type:'water'},
     {x:40, y:height-30, w:10, h:10, type:'fire'},
-    {x:440, y:335, w:10, h:10, type:'earth'},
-    {x:620, y:140, w:10, h:10, type:'air'}
+    {x:320, y:40, w:10, h:10, type:'air'}
   ],
   finish : [
     {x:620, y:510, w:160, h:70}
   ],
-  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
+  player : {x:300, y:200, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
 };
 
 // Level3 - the air water and earth level
