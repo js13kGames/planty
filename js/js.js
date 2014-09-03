@@ -114,7 +114,11 @@ levels[3] = {
     {x:0,y:0,w:width,h:10},
 
     // Inner walls
-    {x:80, y:400, w:10, h:190, type:'air'},
+
+    {x:10, y:80, w:80, h:10, type:'air'},
+    {x:80, y:10, w:10, h:80, type:'air'},
+
+    {x:80, y:400, w:10, h:190, type:'earth'},
     {x:600, y:350, w:10, h:250, type:'spirit'},
     {x:600, y:80, w:10, h: 80, type:'earth'},
     {x:600, y:160, w:80, h:10, type:'earth'},
@@ -126,6 +130,7 @@ levels[3] = {
     {x:410, y:370, w:80, h:10, type:'water'},
     {x:400, y:300, w:80, h:10, type:'water'},
 
+    {x:610, y:400, w:180, h:10, type:'fire'},
     {x:610, y:430, w:180, h:10, type:'air'},
     {x:610, y:460, w:180, h:10, type:'earth'},
     {x:610, y:490, w:180, h:10, type:'water'},
@@ -134,7 +139,7 @@ levels[3] = {
     {x:400,y:250,w:10,h:10, availableElements:['fire', 'earth', 'spirit', 'air', 'water'], cd:120}
   ],
   pickups : [
-    {x:20, y:40, w:10, h:10, type:'water'},
+    {x:40, y:40, w:10, h:10, type:'water'},
     {x:40, y:height-30, w:10, h:10, type:'fire'},
     {x:440, y:335, w:10, h:10, type:'earth'},
     {x:620, y:140, w:10, h:10, type:'air'}
@@ -225,7 +230,7 @@ levels[5] = {
 var collidibles , spawns, pickups, finish;
 
 var elements = [];
-var colors = {'fire':'orange', 'water':'aqua', 'earth':'brown', 'air':'ghostwhite', 'spirit':'black'};
+var colors = {'fire':'#FA6900', 'water':'#046D8B', 'earth':'#784800', 'air':'ghostwhite', 'spirit':'black'};
 var enemies = [];
 var projectiles = [];
 
@@ -300,7 +305,7 @@ function animate(timestamp){
   collideProjecties();
 
 // Shoot  
-  if(keys['SPACE'] && player.cd <= 0 && player.element){
+  if(keys['SPACE'] && player.cd <= 0 && player.type){
     // Shoot
     drawPlant('Shoot');
     shoot();
@@ -348,7 +353,7 @@ function checkMove(direction, moveProperty, invert){
     }
 
     index = collision(player, collidibles);
-    if(index > -1 && player.element !== collidibles[index].type){
+    if(index > -1 && player.type !== collidibles[index].type){
       // Collided with object
       if(invert){
         player[moveProperty] += moveSpeed;
@@ -366,7 +371,8 @@ function collideProjecties(){
   
   for(i=0; i<projectiles.length; i++){
     var index = collision(projectiles[i], collidibles);
-    if(index > -1){
+    if(index > -1 && collidibles[index].type !== player.type){
+
       // Collision with walls
       projectiles.splice(i,1);
 
@@ -374,7 +380,7 @@ function collideProjecties(){
       // Collision with enemies
       index = collision(projectiles[i], enemies);
       if(index > -1){
-        if(player.element === enemies[index].type){
+        if(player.type === enemies[index].type){
           // Same element, enemy gets stronger
           enemies[index].w+=2;
           enemies[index].h+=2;
@@ -392,7 +398,6 @@ function collideEnemies(){
   for(i=0; i<enemies.length; i++){
     var o = enemies[i];
     
-
     o.x += (o.x < player.x) ? o.speed : -o.speed;
     var index = collision(o, collidibles);
 
@@ -410,7 +415,6 @@ function collideEnemies(){
     }else{
       o.y -= (o.y < player.y) ? o.speed : -o.speed;
     }
-
   }
 }
 
@@ -429,7 +433,7 @@ function checkFinish(){
 
 function shoot() {
 
-  var p = {x:player.x, y:player.y, w:3, h:3, color:colors[player.element], tX:0, tY:0};
+  var p = {x:player.x, y:player.y, w:3, h:3, color:colors[player.type], tX:0, tY:0};
 
   p = modDirection(p);
   projectiles.push(p);
@@ -498,7 +502,7 @@ function gain(item){
   // Picked up an element
   elements.push({type:item, color: colors[item]});
   if(elements.length === 1){
-    player.element = item;
+    player.type = item;
   }
 }
 
@@ -603,7 +607,7 @@ function drawPlant(state) {
   
   for(i=0; i<elements.length; i++){
     var e = elements[i];
-    var w = (player.element === e.type) ? 6 : 5;
+    var w = (player.type === e.type) ? 6 : 5;
     rect(x + (i*5), y, w, w, e.color);
   }
 
@@ -664,7 +668,7 @@ function setKey(event, status) {
       var a = 3-(52-code);
       // Activate element
       if(elements.length > 0){
-        player.element = elements[a].type;
+        player.type = elements[a].type;
       }
       break;
     case 97:
@@ -674,7 +678,7 @@ function setKey(event, status) {
       var a = 3-(100-code);
       // Activate element
       if(elements.length > 0){
-        player.element = elements[a].type;
+        player.type = elements[a].type;
       }
       break;
 
