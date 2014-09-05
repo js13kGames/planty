@@ -488,7 +488,7 @@ function die(){
 }
 
 function win(){
-  alert('you safed the galaxy :D');
+  alert('you safed the galaxy!');
   document.write('<h1>:D</h1>');
 }
 
@@ -699,7 +699,7 @@ function onLoad(){
 
     if(currLvl === 1){
       showL1Instructions();
-    }else if(currLvl == 5){
+    }else if(currLvl >= 5){
       win();
     }else{
       hideL1Instructions();
