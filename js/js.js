@@ -1,11 +1,14 @@
-var c = document.getElementById("game");
-var ctx = c.getContext("2d");
-var width = c.width;
-var height = c.height;
+var can = document.getElementById("game");
+var c = can.getContext("2d");
 var animateID;
 var stop = true;
 var i;
 var root = this;
+var f='fire';
+var w='water';
+var s='spirit';
+var a='air';
+var e='earth';
 
 var planty1 = new Image();
 planty1.src = "./images/planty1.gif";
@@ -29,35 +32,35 @@ var enemyWidth = 20;
 var keys = [];
 var frameCount = 0;
 
-var currentLevel = 1;
+var currLvl = 1;
 var levels = [];
+
+var outerWalls = [
+  {x:0,y:0,w:10,h:600,type:s},
+  {x:790,y:0,w:10,h:600,type:s},
+  {x:0,y:590,w:800,h:10,type:s},
+  {x:0,y:0,w:800,h:10,type:s}
+];
 
 // Level1 the water level
 levels[1] = {
   collidibles : [
-    // Outer Walls
-    {x:0,y:0,w:10,h:height},
-    {x:width-10,y:0,w:10,h:height},
-    {x:0,y:height-10,w:width,h:10},
-    {x:0,y:0,w:width,h:10},
-
     // Inner walls
-    {x:10, y:400, w:80, h:10, type:'water'},
-
-    {x:400, y:300, w:10, h:80, type:'water'},
-    {x:480, y:300, w:10, h:80, type:'water'},
-    {x:410, y:370, w:80, h:10, type:'water'},
-    {x:400, y:300, w:80, h:10, type:'water'},
-
-    {x:210, y:490, w:180, h:10, type:'water'},
-    {x:210, y:490, w:10, h:100, type:'water'},
-    {x:390, y:490, w:10, h:100, type:'water'},
+    [10, 400, 80, 10, w],
+    [400, 300, 10, 80, w],
+    [480, 300, 10, 80, w],
+    [410, 370, 80, 10, w],
+    [400, 300, 80, 10, w],
+    [210, 490, 180, 10, w],
+    [210, 490, 10, 100, w],
+    [390, 490, 10, 100, w]
+    
   ],
   spawns : [
-    {x:400,y:250,w:10,h:10, availableTypes:['fire', 'earth', 'spirit', 'air'], nextElement:'earth', cd:120}
+    {x:400,y:250,w:10,h:10, availableTypes:[f, e, s, a], nextElement:e, cd:120}
   ],
   pickups : [
-    {x:40, y:40, w:10, h:10, type:'water'}
+    {x:40, y:40, w:10, h:10, type:w}
   ],
   finish : [
     {x:225, y:510, w:160, h:70}
@@ -69,29 +72,21 @@ levels[1] = {
 // Level1 the air + water level
 levels[2] = {
   collidibles : [
-    // Outer Walls
-    {x:0,y:0,w:10,h:height},
-    {x:width-10,y:0,w:10,h:height},
-    {x:0,y:height-10,w:width,h:10},
-    {x:0,y:0,w:width,h:10},
-
     // Inner walls
-    {x:80, y:400, w:10, h:190, type:'air'},
-    {x:10, y:400, w:80, h:10, type:'water'},    
-
-    {x:100, y:150, w:400, h:10, type:'earth'},
-    {x:300, y:10, w:10, h:150, type:'earth'},
-
-    {x:610, y:490, w:180, h:10, type:'fire'},
-    {x:600, y:390, w:10, h:200, type:'spirit'},
+    [80, 400, 10, 190, a],
+    [10, 400, 80, 10, w],
+    [100, 150, 400, 10, e],
+    [300, 10, 10, 150, e],
+    [610, 490, 180, 10, f],
+    [600, 390, 10, 200, s]
   ],
   spawns : [
-    {x:350,y:370,w:10,h:10, availableTypes:['fire', 'earth', 'spirit', 'air'], nextElement:'air', cd:120}
+    {x:350,y:370,w:10,h:10, availableTypes:[f, e, s, a], nextElement:a, cd:120}
   ],
   pickups : [
-    {x:280, y:40, w:10, h:10, type:'water'},
-    {x:40, y:height-30, w:10, h:10, type:'fire'},
-    {x:320, y:40, w:10, h:10, type:'air'}
+    {x:280, y:40, w:10, h:10, type:w},
+    {x:40, y:570, w:10, h:10, type:f},
+    {x:320, y:40, w:10, h:10, type:a}
   ],
   finish : [
     {x:620, y:510, w:160, h:70}
@@ -102,42 +97,31 @@ levels[2] = {
 // Level3 - the air water and earth level
 levels[3] = {
   collidibles : [
-    // Outer Walls
-    {x:0,y:0,w:10,h:height},
-    {x:width-10,y:0,w:10,h:height},
-    {x:0,y:height-10,w:width,h:10},
-    {x:0,y:0,w:width,h:10},
-
     // Inner walls
-
-    {x:10, y:80, w:80, h:10, type:'air'},
-    {x:80, y:10, w:10, h:80, type:'air'},
-
-    {x:80, y:400, w:10, h:190, type:'earth'},
-    {x:600, y:350, w:10, h:250, type:'spirit'},
-    {x:600, y:80, w:10, h: 80, type:'earth'},
-    {x:600, y:160, w:80, h:10, type:'earth'},
-
-    {x:10, y:400, w:80, h:10, type:'water'},
-
-    {x:400, y:300, w:10, h:80, type:'water'},
-    {x:480, y:300, w:10, h:80, type:'water'},
-    {x:410, y:370, w:80, h:10, type:'water'},
-    {x:400, y:300, w:80, h:10, type:'water'},
-
-    {x:610, y:400, w:180, h:10, type:'fire'},
-    {x:610, y:430, w:180, h:10, type:'air'},
-    {x:610, y:460, w:180, h:10, type:'earth'},
-    {x:610, y:490, w:180, h:10, type:'water'},
+    [10,80,80,10,a],
+    [80,10,10,80,a],
+    [80, 400, 10, 190, e],
+    [600, 350, 10, 250, s],
+    [600, 80, 10,  80, e],
+    [600, 160, 80, 10, e],
+    [10, 400, 80, 10, w],
+    [400, 300, 10, 80, w],
+    [480, 300, 10, 80, w],
+    [410, 370, 80, 10, w],
+    [400, 300, 80, 10, w],
+    [610, 400, 180, 10, f],
+    [610, 430, 180, 10, a],
+    [610, 460, 180, 10, e],
+    [610, 490, 180, 10, w]
   ],
   spawns : [
-    {x:400,y:250,w:10,h:10, availableTypes:['fire', 'earth', 'spirit', 'air', 'water'], nextElement:'fire', cd:120}
+    {x:400,y:250,w:10,h:10, availableTypes:[f, e, s, a, w], nextElement:f, cd:120}
   ],
   pickups : [
-    {x:40, y:40, w:10, h:10, type:'water'},
-    {x:40, y:height-30, w:10, h:10, type:'fire'},
-    {x:440, y:335, w:10, h:10, type:'earth'},
-    {x:620, y:140, w:10, h:10, type:'air'}
+    {x:40, y:40, w:10, h:10, type:w},
+    {x:40, y:570, w:10, h:10, type:f},
+    {x:440, y:335, w:10, h:10, type:e},
+    {x:620, y:140, w:10, h:10, type:a}
   ],
   finish : [
     {x:620, y:510, w:160, h:70}
@@ -151,43 +135,31 @@ levels[3] = {
 // Level4 - the air water spirit and earth level
 levels[4] = {
   collidibles : [
-    // Outer Walls
-    {x:0,y:0,w:10,h:height},
-    {x:width-10,y:0,w:10,h:height},
-    {x:0,y:height-10,w:width,h:10},
-    {x:0,y:0,w:width,h:10},
-
     // Inner walls
-    {x:10, y:100, w:100, h:10, type:'fire'},
-
-    {x:400, y:10, w:10, h:580, type:'fire'},
-
-    {x:600, y:10, w:10, h:150, type:'earth'},
-    {x:600, y:150, w:190, h:10, type:'earth'},
-    {x:600, y:250, w:10, h:250, type:'earth'},
-
-    {x:600, y:490, w:10, h:100, type:'air'},
-    {x:600, y:490, w:190, h:10, type:'air'},
-
-    {x:500, y:300, w:50, h:10, type:'spirit'},
-    {x:550, y:250, w:60, h:10, type:'spirit'},
-    {x:550, y:250, w:10, h:60, type:'spirit'},
-    {x:500, y:300, w:10, h:60, type:'spirit'},
-
-    {x:100, y:500, w:100, h:10, type:'water'},
-    {x:100, y:10, w:10, h:500, type:'water'},
-    {x:200, y:10, w:10, h:500, type:'water'},
-    
+    [10, 100, 100, 10, f],
+    [400, 10, 10, 580, f],
+    [600, 10, 10, 150, e],
+    [600, 150, 190, 10, e],
+    [600, 250, 10, 250, e],
+    [600, 490, 10, 100, a],
+    [600, 490, 190, 10, a],
+    [500, 300, 50, 10, s],
+    [550, 250, 60, 10, s],
+    [550, 250, 10, 60, s],
+    [500, 300, 10, 60, s],
+    [100, 500, 100, 10, w],
+    [100, 10, 10, 500, w],
+    [200, 10, 10, 500, w] 
   ],
   spawns : [
-    {x:500,y:540,w:10,h:10, availableTypes:['fire', 'air', 'earth'], nextElement:'fire', cd:120},
-    {x:300,y:40,w:10,h:10, availableTypes:['fire', 'water'], nextElement:'water', cd:120}
+    {x:500,y:540,w:10,h:10, availableTypes:[f, a, e], nextElement:f, cd:120},
+    {x:300,y:40,w:10,h:10, availableTypes:[f, w], nextElement:w, cd:120}
   ],
   pickups : [
-    {x:40, y:40, w:10, h:10, type:'water'},
-    {x:760, y:40, w:10, h:10, type:'fire'},
-    {x:580, y:290, w:10, h:10, type:'earth'},
-    {x:150, y:450, w:10, h:10, type:'air'}
+    {x:40, y:40, w:10, h:10, type:w},
+    {x:760, y:40, w:10, h:10, type:f},
+    {x:580, y:290, w:10, h:10, type:e},
+    {x:150, y:450, w:10, h:10, type:a}
   ],
   finish : [
     {x:620, y:510, w:160, h:70}
@@ -198,29 +170,23 @@ levels[4] = {
 // Level5 FIRE!
 levels[5] = {
   collidibles : [
-    // Outer Walls
-    {x:0,y:0,w:10,h:height},
-    {x:width-10,y:0,w:10,h:height},
-    {x:0,y:height-10,w:width,h:10},
-    {x:0,y:0,w:width,h:10},
-
     // Inner walls
-    {x:10,y:80, w:300, h:10, type:'fire'},
-    {x:160, y:490, h:100, w:10, type:'water'},
-    {x:190, y:490, h:100, w:10, type:'fire'},
-    {x:220, y:490, h:100, w:10, type:'earth'},
-    {x:250, y:490, h:100, w:10, type:'air'},
-    {x:10, y:480, h:10, w:260, type:'spirit'},
+    [10,80, 300, 10, f],
+    [160, 490, 100, 10, w],
+    [190, 490, 100, 10, f],
+    [220, 490, 100, 10, e],
+    [250, 490, 100, 10, a],
+    [10, 480, 10, 260, s]
 
   ],
   spawns : [
-    //{x:400,y:250,w:10,h:10, nextElement:'fire', cd:120}
+    //{x:400,y:250,w:10,h:10, nextElement:f, cd:120}
   ],
   pickups : [
-    // {x:20, y:40, w:10, h:10, type:'water'},
-    // {x:40, y:height-30, w:10, h:10, type:'fire'},
-    // {x:440, y:335, w:10, h:10, type:'earth'},
-    // {x:620, y:140, w:10, h:10, type:'air'}
+    // {x:20, y:40, w:10, h:10, type:w},
+    // {x:40, y:height-30, w:10, h:10, type:f},
+    // {x:440, y:335, w:10, h:10, type:e},
+    // {x:620, y:140, w:10, h:10, type:a}
   ],
   finish : [
     {x:0, y:510, w:50, h:50}
@@ -231,7 +197,7 @@ levels[5] = {
 var collidibles , spawns, pickups, finish;
 
 var elements = [];
-var colors = {'fire':'#FA6900', 'water':'#046D8B', 'earth':'#784800', 'air':'ghostwhite', 'spirit':'black'};
+var colors = {f:'#FA6900', w:'#046D8B', e:'#784800', a:'ghostwhite', s:'black'};
 var enemies = [];
 var projectiles = [];
 
@@ -258,7 +224,6 @@ function animate(timestamp){
   for(i=0; i<spawns.length; i++){
     if(spawns[i].cd-- <= 0){
       spawns[i].cd = 120;
-      
       var nextElement = spawns[i].nextElement; 
       spawns[i].nextElement = spawns[i].availableTypes[Math.floor(Math.random()*4)];
       enemies.push(
@@ -273,8 +238,8 @@ function animate(timestamp){
   }
 
   // Clear canvas
-  ctx.save();
-  ctx.clearRect(0,0,width,height);
+  c.save();
+  c.clearRect(0,0,800,600);
 
   // Draw things
   drawCollidibles();
@@ -335,7 +300,7 @@ function animate(timestamp){
 
   
   //roundedRect(ctx, player.x, player.y, 10, 10, 4, "blue");
-  ctx.restore();
+  c.restore();
 
   if (stop === false) {
       animateID = window.requestAnimationFrame(animate);
@@ -355,7 +320,7 @@ function checkMove(direction, moveProperty, invert){
     }
 
     index = collision(player, collidibles);
-    if(index > -1 && player.type !== collidibles[index].type){
+    if(index > -1 &&  (! elements[collidibles[index].type]) ){
       // Collided with object
       if(invert){
         player[moveProperty] += moveSpeed;
@@ -421,8 +386,8 @@ function collideEnemies(){
 }
 
 function finished(){
-  currentLevel++;
-  goLevel(currentLevel);
+  currLvl++;
+  goLevel(currLvl);
 }
 
 function checkFinish(){
@@ -435,7 +400,7 @@ function checkFinish(){
 
 function shoot() {
 
-  var p = {x:player.x, y:player.y, w:3, h:3, color:colors[player.type], tX:0, tY:0};
+  var p = {x:player.x, y:player.y, w:6, h:6, color:colors[player.type], tX:0, tY:0};
 
   p = modDirection(p);
   projectiles.push(p);
@@ -487,15 +452,10 @@ function collision(obj, arr) {
 }
 
 function pickup(){
-  var i;
-  for(i=0; i<pickups.length; i++){
-    var o = pickups[i];
-    if((player.x + player.w > o.x && player.x < o.x+o.w) &&
-      (player.y + player.h > o.y && player.y < o.y+o.h)){
-      gain(o.type);
-      pickups.splice(i,1);
-      break;
-    }
+  var index = collision(player, pickups);
+  if(index > -1){
+    gain(pickups[index].type);
+    pickups.splice(index,1);
   }
 }
 
@@ -503,6 +463,7 @@ function gain(item){
 
   // Picked up an element
   elements.push({type:item, color: colors[item]});
+  elements[item] = true;
   if(elements.length === 1){
     player.type = item;
   }
@@ -527,7 +488,7 @@ function die(){
 }
 
 function again(){
-  goLevel(currentLevel);
+  goLevel(currLvl);
 }
 
 function goLevel(level){
@@ -574,29 +535,29 @@ function drawProjectiles() {
 
 function drawSpawns() {
   for(i=0; i<spawns.length; i++){
-    ctx.strokeStyle = 'black';
-    ctx.fillStyle = colors[spawns[i].nextElement];
-    ctx.beginPath();
-    ctx.arc(spawns[i].x, spawns[i].y, spawns[i].w, 0, Math.PI*2, true );
-    ctx.stroke();
-    ctx.fill();
+    c.strokeStyle = 'black';
+    c.fillStyle = colors[spawns[i].nextElement];
+    c.beginPath();
+    c.arc(spawns[i].x, spawns[i].y, spawns[i].w, 0, Math.PI*2, true );
+    c.stroke();
+    c.fill();
   }
 }
 
 function drawFinish() {
-  ctx.fillStyle = "gray";
-  ctx.font = "20pt Helvetica";
-  ctx.fillText("Exit", finish.x+55, finish.y+45);
+  c.fillStyle = "gray";
+  c.font = "20pt Helvetica";
+  c.fillText("Exit", finish.x+55, finish.y+45);
 }
 
 function rect(x,y,w,h, color, lineColor) {
 
-  ctx.strokeStyle = lineColor || 'black';
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.rect(x, y, w, h);
-  ctx.stroke();
-  ctx.fill();
+  c.strokeStyle = lineColor || 'black';
+  c.fillStyle = color;
+  c.beginPath();
+  c.rect(x, y, w, h);
+  c.stroke();
+  c.fill();
 }
 
 function drawPlant(state) {
@@ -606,7 +567,7 @@ function drawPlant(state) {
   if(keys['LEFT'] || player.lastDirection === 'LEFT'){
     flipImage(root['planty' + state], x, y);
   }else{
-    ctx.drawImage(root['planty' + state],x,y);
+    c.drawImage(root['planty' + state],x,y);
   }
   
   for(i=0; i<elements.length; i++){
@@ -623,10 +584,10 @@ function flipImage(image, x, y) {
 
   x = (image.width * -1) + 0-x;
 
-  ctx.save();
-  ctx.scale(-1, 1);
-  ctx.drawImage(image, x, y, image.width, image.height);
-  ctx.restore();
+  c.save();
+  c.scale(-1, 1);
+  c.drawImage(image, x, y, image.width, image.height);
+  c.restore();
 }
 
 function showL1Instructions(){
@@ -640,6 +601,14 @@ function hideL1Instructions(){
   get('l1i').display = 'none';
 }
 
+// Create level object from array
+function wall(o){
+  var a = [];
+  for(i=0;i<o.length;i++){
+    a.push({x:o[i][0], y:o[i][1], w:o[i][2], h:o[i][3], type:o[i][4]});
+  }
+  return a;
+}
 
 // ---  Movement  ---
 
@@ -696,9 +665,6 @@ function setKey(event, status) {
         player.type = elements[a].type;
       }
       break;
-
-    default:
-    console.log(code);
     }
 
 }
@@ -720,23 +686,25 @@ function onLoad(){
   var u = location.search;
   if(u.indexOf('autoStart') > -1){
     
-    c.classList.remove('disabled');
+    get('game').classList.remove('disabled');
     get('btn').classList.add('hidden');
 
     var q = qs(location.search);
-    currentLevel = parseInt(q.level);
+    currLvl = parseInt(q.level);
 
-    if(currentLevel === 1){
+    if(currLvl === 1){
       showL1Instructions();
     }else{
       hideL1Instructions();
     }
 
-    collidibles = levels[currentLevel].collidibles;
-    spawns = levels[currentLevel].spawns;
-    pickups = levels[currentLevel].pickups;
-    finish = levels[currentLevel].finish[0];
-    player = levels[currentLevel].player;
+    // Add the level's items
+    var walls = wall(levels[currLvl].collidibles);
+    collidibles = outerWalls.concat(walls);
+    spawns = levels[currLvl].spawns;
+    pickups = levels[currLvl].pickups;
+    finish = levels[currLvl].finish[0];
+    player = levels[currLvl].player;
 
     stop = false;
     animateID = window.requestAnimationFrame(animate);
