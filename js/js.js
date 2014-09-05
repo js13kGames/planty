@@ -197,7 +197,7 @@ levels[5] = {
 var collidibles , spawns, pickups, finish;
 
 var elements = [];
-var colors = {f:'#FA6900', w:'#046D8B', e:'#784800', a:'ghostwhite', s:'black'};
+var colors = {fire:'#FA6900', water:'#046D8B', earth:'#784800', air:'ghostwhite', spirit:'black'};
 var enemies = [];
 var projectiles = [];
 
@@ -487,6 +487,11 @@ function die(){
   get('dead').style.top = '579px';
 }
 
+function win(){
+  alert('you safed the galaxy :D');
+  document.write('<h1>:D</h1>');
+}
+
 function again(){
   goLevel(currLvl);
 }
@@ -694,6 +699,8 @@ function onLoad(){
 
     if(currLvl === 1){
       showL1Instructions();
+    }else if(currLvl == 5){
+      win();
     }else{
       hideL1Instructions();
     }
