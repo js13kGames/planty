@@ -1,8 +1,4 @@
-.image {
-	display:none;
-}
-
-.instructions {
+.ctrl {
 	background: #EEEEEE;
 	font-family: monospace;
 	padding: 5px;

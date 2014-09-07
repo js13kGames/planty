@@ -1,15 +1,16 @@
+// Canvas
 var can = document.getElementById("game");
 var c = can.getContext("2d");
-var animateID;
-var stop = true;
-var i;
-var root = this;
-var f='fire';
-var w='water';
-var s='spirit';
-var a='air';
-var e='earth';
 
+// Misc
+var animateID, player;
+var stop = true;
+var root = this;
+
+// Element types
+var f='fire', w='water', s='spirit', a='air', e='earth';
+
+// Images
 var planty1 = new Image();
 planty1.src = "./images/planty1.gif";
 
@@ -22,42 +23,33 @@ planty3.src = "./images/planty3.gif";
 var plantyShoot = new Image();
 plantyShoot.src = "./images/plantyShoot.gif";
 
-var player;
-var moveSpeed = 0;
-var projectileSpeed = 5;
-var shootCD = 20;
+// Numbers
+var i, projectileSpeed = 5, shootCD = 20, spawnCD = 120, enemyWidth = 20, frameCount = 0;
+// Movement
+var moveSpeed = 0, keys = [];
 
-var enemyWidth = 20;
 
-var keys = [];
-var frameCount = 0;
-
+// Levels
 var currLvl = 1;
 var levels = [];
 
 var outerWalls = [
-  {x:0,y:0,w:10,h:600,type:s},
-  {x:790,y:0,w:10,h:600,type:s},
-  {x:0,y:590,w:800,h:10,type:s},
-  {x:0,y:0,w:800,h:10,type:s}
+  {x:0,   y:0,  w:10, h:600,  type:s},
+  {x:790, y:0,  w:10, h:600,  type:s},
+  {x:0,   y:590,w:800,h:10,   type:s},
+  {x:0,   y:0,  w:800,h:10,   type:s}
 ];
 
-// Level1 the water level
+// Level 1 the water level
 levels[1] = {
-  collidibles : [
+  walls : [
     // Inner walls
-    [10, 400, 80, 10, w],
-    [400, 300, 10, 80, w],
-    [480, 300, 10, 80, w],
-    [410, 370, 80, 10, w],
-    [400, 300, 80, 10, w],
     [210, 490, 180, 10, w],
     [210, 490, 10, 100, w],
     [390, 490, 10, 100, w]
-    
   ],
   spawns : [
-    {x:400,y:250,w:10,h:10, availableTypes:[f, e, s, a], nextElement:e, cd:120}
+    {x:400,y:250,w:10,h:10, types:[f, e, s, a], nextElement:e, cd:120}
   ],
   pickups : [
     {x:40, y:40, w:10, h:10, type:w}
@@ -71,7 +63,7 @@ levels[1] = {
 
 // Level1 the air + water level
 levels[2] = {
-  collidibles : [
+  walls : [
     // Inner walls
     [80, 400, 10, 190, a],
     [10, 400, 80, 10, w],
@@ -81,7 +73,7 @@ levels[2] = {
     [600, 390, 10, 200, s]
   ],
   spawns : [
-    {x:350,y:370,w:10,h:10, availableTypes:[f, e, s, a], nextElement:a, cd:120}
+    {x:350,y:370,w:10,h:10, types:[f, e, s, a], nextElement:a, cd:120}
   ],
   pickups : [
     {x:280, y:40, w:10, h:10, type:w},
@@ -96,7 +88,7 @@ levels[2] = {
 
 // Level3 - the air water and earth level
 levels[3] = {
-  collidibles : [
+  walls : [
     // Inner walls
     [10,80,80,10,a],
     [80,10,10,80,a],
@@ -115,7 +107,7 @@ levels[3] = {
     [610, 490, 180, 10, w]
   ],
   spawns : [
-    {x:400,y:250,w:10,h:10, availableTypes:[f, e, s, a, w], nextElement:f, cd:120}
+    {x:400,y:250,w:10,h:10, types:[f, e, s, a, w], nextElement:f, cd:120}
   ],
   pickups : [
     {x:40, y:40, w:10, h:10, type:w},
@@ -134,8 +126,7 @@ levels[3] = {
 
 // Level4 - the air water spirit and earth level
 levels[4] = {
-  collidibles : [
-    // Inner walls
+  walls : [
     [10, 100, 100, 10, f],
     [400, 10, 10, 580, f],
     [600, 10, 10, 150, e],
@@ -152,8 +143,8 @@ levels[4] = {
     [200, 10, 10, 500, w] 
   ],
   spawns : [
-    {x:500,y:540,w:10,h:10, availableTypes:[f, a, e], nextElement:f, cd:120},
-    {x:300,y:40,w:10,h:10, availableTypes:[f, w], nextElement:w, cd:120}
+    {x:500,y:540,w:10,h:10, types:[f, a, e], nextElement:f, cd:120},
+    {x:300,y:40,w:10,h:10, types:[f, w], nextElement:w, cd:120}
   ],
   pickups : [
     {x:40, y:40, w:10, h:10, type:w},
@@ -169,18 +160,14 @@ levels[4] = {
 
 // Level5 FIRE!
 levels[5] = {
-  collidibles : [
-    // Inner walls
-    [10,80, 300, 10, f],
-    [160, 490, 100, 10, w],
-    [190, 490, 100, 10, f],
-    [220, 490, 100, 10, e],
-    [250, 490, 100, 10, a],
-    [10, 480, 10, 260, s]
+  walls : [
 
   ],
   spawns : [
-    //{x:400,y:250,w:10,h:10, nextElement:f, cd:120}
+    {x:40,y:40,w:10,h:10, types:[f, a, e, w], nextElement:f, cd:10},
+    {x:760,y:40,w:10,h:10, types:[f, a, e, w], nextElement:f, cd:10},
+    {x:40,y:560,w:10,h:10, types:[f, a, e, w], nextElement:f, cd:10},
+    {x:760,y:560,w:10,h:10, types:[f, a, e, w], nextElement:f, cd:10}
   ],
   pickups : [
     // {x:20, y:40, w:10, h:10, type:w},
@@ -189,12 +176,12 @@ levels[5] = {
     // {x:620, y:140, w:10, h:10, type:a}
   ],
   finish : [
-    {x:0, y:510, w:50, h:50}
+
   ],
-  player : {x:10, y:10, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
+  player : {x:380, y:280, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
 };
 
-var collidibles , spawns, pickups, finish;
+var walls, spawns, pickups, finish;
 
 var elements = [];
 var colors = {fire:'#FA6900', water:'#046D8B', earth:'#784800', air:'ghostwhite', spirit:'black'};
@@ -223,9 +210,9 @@ function animate(timestamp){
 
   for(i=0; i<spawns.length; i++){
     if(spawns[i].cd-- <= 0){
-      spawns[i].cd = 120;
+      spawns[i].cd = spawnCD;
       var nextElement = spawns[i].nextElement; 
-      spawns[i].nextElement = spawns[i].availableTypes[Math.floor(Math.random()*4)];
+      spawns[i].nextElement = spawns[i].types[Math.floor(Math.random()*4)];
       enemies.push(
         { x:spawns[i].x, 
           y:spawns[i].y, 
@@ -242,7 +229,7 @@ function animate(timestamp){
   c.clearRect(0,0,800,600);
 
   // Draw things
-  drawCollidibles();
+  drawWalls();
   drawPickups();
   drawProjectiles();
   drawSpawns();
@@ -294,12 +281,14 @@ function animate(timestamp){
     }
   }
 
+  if(currLvl === 5){
+    shoot5();
+  }
+
   if(player.cd > 0){
     player.cd --;
   }
 
-  
-  //roundedRect(ctx, player.x, player.y, 10, 10, 4, "blue");
   c.restore();
 
   if (stop === false) {
@@ -319,8 +308,8 @@ function checkMove(direction, moveProperty, invert){
       player[moveProperty] += moveSpeed;
     }
 
-    index = collision(player, collidibles);
-    if(index > -1 &&  (! elements[collidibles[index].type]) ){
+    index = collision(player, walls);
+    if(index > -1 &&  (! elements[walls[index].type]) ){
       // Collided with object
       if(invert){
         player[moveProperty] += moveSpeed;
@@ -337,8 +326,8 @@ function checkMove(direction, moveProperty, invert){
 function collideProjecties(){
   
   for(i=0; i<projectiles.length; i++){
-    var index = collision(projectiles[i], collidibles);
-    if(index > -1 && collidibles[index].type !== player.type){
+    var index = collision(projectiles[i], walls);
+    if(index > -1 && walls[index].type !== player.type){
 
       // Collision with walls
       projectiles.splice(i,1);
@@ -366,9 +355,9 @@ function collideEnemies(){
     var o = enemies[i];
     
     o.x += (o.x < player.x) ? o.speed : -o.speed;
-    var index = collision(o, collidibles);
+    var index = collision(o, walls);
 
-    if(index === -1 || o.type === collidibles[index].type){
+    if(index === -1 || o.type === walls[index].type){
       // Enemy can pass on the x plane
     }else{
       o.x -= (o.x < player.x) ? o.speed : -o.speed;
@@ -376,8 +365,8 @@ function collideEnemies(){
 
 
     o.y += (o.y < player.y) ? o.speed : -o.speed;
-    index = collision(o, collidibles);
-    if(index === -1 || o.type === collidibles[index].type){
+    index = collision(o, walls);
+    if(index === -1 || o.type === walls[index].type){
       // Enemy can pass on the y plane
     }else{
       o.y -= (o.y < player.y) ? o.speed : -o.speed;
@@ -391,9 +380,7 @@ function finished(){
 }
 
 function checkFinish(){
-  if((player.x + player.w > finish.x && player.x < finish.x + finish.w) &&
-      (player.y + player.h > finish.y && player.y < finish.y + finish.h))
-  {
+  if(collision(player,[finish]) > -1){
     finished();
   }
 }
@@ -405,6 +392,16 @@ function shoot() {
   p = modDirection(p);
   projectiles.push(p);
   player.cd = shootCD;
+}
+
+function shoot5() {
+  var dir = ['RIGHT','LEFT','UP','DOWN'];
+  for(i=0;i<dir.length;i++){
+    var p = {x:player.x, y:player.y, w:6, h:6, color:'#'+(Math.random()*0xFFFFFF<<0).toString(16), tX:0, tY:0};
+    p[dir[i]] = true;
+    p = modDirection(p);
+    projectiles.push(p);
+  }
 }
 
 function modDirection(p){
@@ -487,11 +484,6 @@ function die(){
   get('dead').style.top = '579px';
 }
 
-function win(){
-  alert('you safed the galaxy!');
-  document.write('<h1>:D</h1>');
-}
-
 function again(){
   goLevel(currLvl);
 }
@@ -510,9 +502,9 @@ function drawPickups() {
   }
 }
 
-function drawCollidibles() {
-  for(i=0; i<collidibles.length; i++){
-    var o = collidibles[i];
+function drawWalls() {
+  for(i=0; i<walls.length; i++){
+    var o = walls[i];
     rect(o.x, o.y, o.w, o.h, colors[o.type]);
   }
 }
@@ -699,19 +691,22 @@ function onLoad(){
 
     if(currLvl === 1){
       showL1Instructions();
-    }else if(currLvl >= 5){
-      win();
+    }else if(currLvl === 5){
+      alert('Congratulations!');
+      get('howto').innerHTML = '<h2>You found the 5th element, it was you all along! You now get to spend eternity keeping the balance!<h2>';
     }else{
       hideL1Instructions();
     }
 
     // Add the level's items
-    var walls = wall(levels[currLvl].collidibles);
-    collidibles = outerWalls.concat(walls);
-    spawns = levels[currLvl].spawns;
-    pickups = levels[currLvl].pickups;
-    finish = levels[currLvl].finish[0];
-    player = levels[currLvl].player;
+    var lvl = levels[currLvl];
+    var innerWalls = wall(lvl.walls);
+    walls = outerWalls.concat(innerWalls);
+    spawns = lvl.spawns;
+    pickups = lvl.pickups;
+    finish = lvl.finish[0] || {};
+    player = lvl.player;
+    spawnCD = spawns[0].cd;
 
     stop = false;
     animateID = window.requestAnimationFrame(animate);
@@ -719,14 +714,11 @@ function onLoad(){
 }
 
 function qs(qs) {
-    qs = qs.split("+").join(" ");
-
     var params = {}, tokens,
         re = /[?&]?([^=]+)=([^&]*)/g;
 
     while (tokens = re.exec(qs)) {
-        params[decodeURIComponent(tokens[1])]
-            = decodeURIComponent(tokens[2]);
+        params[tokens[1]] = tokens[2];
     }
 
     return params;
