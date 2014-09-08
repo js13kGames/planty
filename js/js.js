@@ -272,7 +272,7 @@ function animate(timestamp){
   collideProjecties();
 
 // Shoot  
-  if(keys['SPACE'] && player.cd <= 0 && player.type && player.canShoot){
+  if(keys['SPACE'] && player.cd <= 0 && player.canShoot){
     // Shoot
     drawPlant('Shoot');
     shoot();
@@ -687,8 +687,13 @@ function setKey(event, status) {
         player.type = elements[a].type;
       }
       break;
+        // q for cheats
+    case 81:
+      player.canSprint = true;
+      player.canShoot = true;
+      event.preventDefault();
+      break;
     }
-
 }
 
 
