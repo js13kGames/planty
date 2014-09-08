@@ -34,10 +34,10 @@ var currLvl = 1;
 var levels = [];
 
 var outerWalls = [
-  {x:0,   y:0,  w:10, h:600,  type:s},
-  {x:790, y:0,  w:10, h:600,  type:s},
-  {x:0,   y:590,w:800,h:10,   type:s},
-  {x:0,   y:0,  w:800,h:10,   type:s}
+  {x:0,   y:0,  w:10, h:600},
+  {x:790, y:0,  w:10, h:600},
+  {x:0,   y:590,w:800,h:10},
+  {x:0,   y:0,  w:800,h:10}
 ];
 
 // Level 1 the water level
@@ -161,7 +161,19 @@ levels[4] = {
 // Level5 FIRE!
 levels[5] = {
   walls : [
+    [10, 80, 360, 10],
+    [10, 260,360, 10],
+    [10, 340,360, 10],
+    [10, 500,360, 10],
+    [370, 80, 10, 190],
+    [370, 340,10, 170],
 
+    [430, 80, 380, 10],
+    [430, 260,380, 10],
+    [430, 340,380, 10],
+    [430, 500,380, 10],
+    [430, 80, 10, 190],
+    [430, 340,10, 170]
   ],
   spawns : [
     {x:40,y:40,w:10,h:10, types:[f, a, e, w], nextElement:f, cd:10},
@@ -174,12 +186,13 @@ levels[5] = {
     // {x:40, y:height-30, w:10, h:10, type:f},
     // {x:440, y:335, w:10, h:10, type:e},
     // {x:620, y:140, w:10, h:10, type:a}
+    {x:760, y:300, w:10, h:10, type:s}
   ],
   finish : [
 
   ],
-  player : {x:380, y:280, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
-};
+  player : {x:40, y:280, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
+}; 
 
 var walls, spawns, pickups, finish;
 
@@ -281,7 +294,12 @@ function animate(timestamp){
     }
   }
 
-  if(currLvl === 5){
+  if(player.type === "spirit"){
+    if(walls.length > 0){
+      walls = outerWalls;
+      projectileSpeed = 5;
+      get('howto').innerHTML = '<h2>You found the 5th element! Now you get to spend eternity keeping the balance!<h2>';
+    }
     shoot5();
   }
 
@@ -397,7 +415,7 @@ function shoot() {
 function shoot5() {
   var dir = ['RIGHT','LEFT','UP','DOWN'];
   for(i=0;i<dir.length;i++){
-    var p = {x:player.x, y:player.y, w:6, h:6, color:'#'+(Math.random()*0xFFFFFF<<0).toString(16), tX:0, tY:0};
+    var p = {x:player.x, y:player.y, w:6, h:6, color:'#'+(Math.random()*0xFFFFFF<<0).toString(16), tX:(Math.random()*10)-5, tY:(Math.random()*10)-5};
     p[dir[i]] = true;
     p = modDirection(p);
     projectiles.push(p);
@@ -691,9 +709,6 @@ function onLoad(){
 
     if(currLvl === 1){
       showL1Instructions();
-    }else if(currLvl === 5){
-      alert('Congratulations!');
-      get('howto').innerHTML = '<h2>You found the 5th element, it was you all along! You now get to spend eternity keeping the balance!<h2>';
     }else{
       hideL1Instructions();
     }
