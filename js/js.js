@@ -57,7 +57,7 @@ levels[1] = {
   finish : [
     {x:225, y:510, w:160, h:70}
   ],
-  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
+  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null, canShoot:false, canSprint:false}
 };
 
 
@@ -83,7 +83,7 @@ levels[2] = {
   finish : [
     {x:620, y:510, w:160, h:70}
   ],
-  player : {x:300, y:200, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
+  player : {x:300, y:200, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null, canShoot:false, canSprint:false}
 };
 
 // Level3 - the air water and earth level
@@ -118,7 +118,7 @@ levels[3] = {
   finish : [
     {x:620, y:510, w:160, h:70}
   ],
-  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
+  player : {x:100, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null, canShoot:false, canSprint:false}
 };
 
 
@@ -155,7 +155,7 @@ levels[4] = {
   finish : [
     {x:620, y:510, w:160, h:70}
   ],
-  player : {x:500, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
+  player : {x:500, y:100, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null, canShoot:false, canSprint:false}
 };
 
 // Level5 FIRE!
@@ -191,13 +191,13 @@ levels[5] = {
   finish : [
 
   ],
-  player : {x:40, y:280, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null}
+  player : {x:40, y:280, h:59, w:37, cd:0, lastDirection:'RIGHT', stamina:100, type:null, canShoot:true, canSprint:true}
 }; 
 
 var walls, spawns, pickups, finish;
 
 var elements = [];
-var colors = {fire:'#FA6900', water:'#046D8B', earth:'#784800', air:'ghostwhite', spirit:'black'};
+var colors = {fire:['#FA6900', 'canSprint'], water:['#046D8B', 'canShoot'], earth:['#784800', 'canSprint'], air:['ghostwhite', 'canSprint'], spirit:['black', 'canSprint']};
 var enemies = [];
 var projectiles = [];
 
@@ -207,7 +207,7 @@ var projectiles = [];
 function animate(timestamp){
   var moving = false;
 
-  if(keys['SHIFT'] && player.stamina > 0){
+  if(keys['SHIFT'] && player.stamina > 0 && player.canSprint){
     player.stamina -= 4;
     moveSpeed = 4;
   }else{
@@ -272,7 +272,7 @@ function animate(timestamp){
   collideProjecties();
 
 // Shoot  
-  if(keys['SPACE'] && player.cd <= 0 && player.type){
+  if(keys['SPACE'] && player.cd <= 0 && player.type && player.canShoot){
     // Shoot
     drawPlant('Shoot');
     shoot();
@@ -280,7 +280,7 @@ function animate(timestamp){
     // Just shot
     drawPlant('Shoot');
   }else{
-    // Animate mr plant
+    // Animate Planty
     if(moving === true) {
       if(frameCount % 15 > 10){
         drawPlant(2);
@@ -405,7 +405,7 @@ function checkFinish(){
 
 function shoot() {
 
-  var p = {x:player.x, y:player.y, w:6, h:6, color:colors[player.type], tX:0, tY:0};
+  var p = {x:player.x, y:player.y, w:6, h:6, color:colors[player.type][0], tX:0, tY:0};
 
   p = modDirection(p);
   projectiles.push(p);
@@ -477,10 +477,11 @@ function pickup(){
 function gain(item){
 
   // Picked up an element
-  elements.push({type:item, color: colors[item]});
+  elements.push({type:item, color: colors[item][0]});
   elements[item] = true;
   if(elements.length === 1){
     player.type = item;
+    player[colors[item][1]] = true;
   }
 }
 
@@ -516,14 +517,18 @@ function goLevel(level){
 function drawPickups() {
   for(i=0; i<pickups.length; i++){
     var o = pickups[i];
-    rect(o.x, o.y, o.w, o.h, colors[o.type]);
+    rect(o.x, o.y, o.w, o.h, colors[o.type][0]);
   }
 }
 
 function drawWalls() {
   for(i=0; i<walls.length; i++){
     var o = walls[i];
-    rect(o.x, o.y, o.w, o.h, colors[o.type]);
+    var c = 'black';
+    if (o.type != null){
+      c = colors[o.type][0];
+    }
+    rect(o.x, o.y, o.w, o.h, c);
   }
 }
 
@@ -535,7 +540,7 @@ function drawEnemies() {
       o.w++;
       o.h++;
     }
-    rect(o.x, o.y, o.w, o.h, colors[o.type], 'purple');
+    rect(o.x, o.y, o.w, o.h, colors[o.type][0], 'purple');
   }
 }
  
@@ -551,7 +556,7 @@ function drawProjectiles() {
 function drawSpawns() {
   for(i=0; i<spawns.length; i++){
     c.strokeStyle = 'black';
-    c.fillStyle = colors[spawns[i].nextElement];
+    c.fillStyle = colors[spawns[i].nextElement][0];
     c.beginPath();
     c.arc(spawns[i].x, spawns[i].y, spawns[i].w, 0, Math.PI*2, true );
     c.stroke();
@@ -592,7 +597,9 @@ function drawPlant(state) {
   }
 
   // Stam bar
-  rect(x,y+player.h, player.w * (player.stamina/100), 3, 'yellow');
+  if (player.canSprint) {
+    rect(x,y+player.h, player.w * (player.stamina/100), 3, 'yellow');
+  }
 }
 
 function flipImage(image, x, y) {
